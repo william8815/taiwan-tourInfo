@@ -2,25 +2,28 @@
   <div class="container">
     <MainHeader/>
     <h1>sightseeing{{setArea}}</h1>
+    <SpotList/>
   </div>
 </template>
 
 <script>
 import MainHeader from "../components/MainHead.vue"
+import SpotList from "./../components/SpotList.vue"
 import spotAPI from "./../apis/scenicSpot"
 import { mapState } from 'vuex' 
 const $ = require("jquery")
 export default {
   components:{
-    MainHeader
+    MainHeader,
+    SpotList
   },
   data(){
     return{
-      top:30,
+      top:10,
       skip:0,
-      selectName:"Class1",
-      category:"Class1",
-      categoryName:"遊憩類"
+      selectName:"ScenicSpotName",
+      category:"ScenicSpotName",
+      categoryName:"紫坪",
     }
   },
   computed: {
@@ -56,7 +59,7 @@ export default {
             localStorage.setItem('token',data.access_token)                            
           },
       });          
-    },
+    },   
     async fetchSpot(area){
       const {data,statusText} = await spotAPI.getSpot({
         area:area,
@@ -77,6 +80,6 @@ export default {
       this.fetchSpot(route.params.area)
       }
     }
-  }
+  },
 }
 </script>
