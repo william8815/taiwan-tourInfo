@@ -14,7 +14,9 @@
                 name: 'sightseeing-spot',
                 params: { area: currentArea.enName },
               }"
-              :class="{ active: $route.name === 'sightseeing-spot' }"
+              :class="{
+                active: $route.name === 'sightseeing-spot',
+              }"
               class="nav-link"
               aria-current="page"
               href="#"
@@ -48,7 +50,7 @@
               href="#"
             >
               <i class="fa-solid fa-bed"></i>
-              <span class="text">住宿</span>
+              <span class="text">旅館</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -95,15 +97,14 @@
           class="search__box d-flex justify-content-center align-items-center"
         >
           <div class="search__title">
-            <span>{{ categoryTitle }}</span>
+            <span>{{ category.title }}</span>
           </div>
           <input
             class="search__input"
             type="text"
             name="search"
             id=""
-            :placeholder="'搜尋相關' + categoryTitle"
-            autofocus
+            :placeholder="'搜尋台灣' + category.title"
           />
           <div class="search__btn">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -234,7 +235,7 @@ export default {
   setup() {
     const switchBox = ref(null);
     const header = ref(null);
-    let prevScroll = ref(0);
+    const prevScroll = ref(0);
     return {
       switchBox,
       header,
@@ -249,7 +250,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentArea", "categoryTitle"]),
+    ...mapState(["currentArea", "category"]),
   },
   created() {
     this.fetchArea();
@@ -284,16 +285,28 @@ export default {
     changeTitle(title) {
       switch (title) {
         case "sightseeing-spot":
-          this.$store.commit("setCategoryTitle", "景點");
+          this.$store.commit("setCategoryTitle", {
+            title: "景點",
+            enTitle: "spot",
+          });
           break;
         case "tasty-food":
-          this.$store.commit("setCategoryTitle", "美食");
+          this.$store.commit("setCategoryTitle", {
+            title: "美食",
+            enTitle: "food",
+          });
           break;
         case "hostel-stay":
-          this.$store.commit("setCategoryTitle", "住宿");
+          this.$store.commit("setCategoryTitle", {
+            title: "旅館",
+            enTitle: "hostel",
+          });
           break;
         case "activity-fun":
-          this.$store.commit("setCategoryTitle", "活動");
+          this.$store.commit("setCategoryTitle", {
+            title: "活動",
+            enTitle: "activity",
+          });
           break;
         default:
           break;
@@ -327,7 +340,7 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 1000;
   background-color: #fff;
   transition: height 0.4s ease-in-out;
   &.cut-height {
@@ -342,7 +355,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 1000;
     background-color: #fff;
   }
 }
@@ -353,8 +366,7 @@ export default {
   right: 0;
   background-color: #fff;
   border-bottom: 1px solid #fff;
-  transition: bottom 0.4s ease-in-out;
-  z-index: 3;
+  z-index: 1000;
   &.hight-line {
     border-bottom: 1px solid #a4a4a4;
     transition: bottom 0.4s ease-in;
@@ -366,12 +378,11 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 999;
   .list {
     width: 90%;
     height: 60px;
     padding: 0 10px;
-    // border: 1px solid #a4a4a4;
     color: #a4a4a4;
     border-radius: 30px;
     margin: 0 auto;
@@ -501,6 +512,9 @@ export default {
   .header {
     height: 190px;
     border-bottom: 1px solid #a4a4a4;
+    &.cut-height {
+      height: 190px;
+    }
   }
   .section {
     max-width: 1400px;
@@ -513,9 +527,10 @@ export default {
     }
   }
   .switch-box {
+    all: unset;
     position: static;
     &.hight-line {
-      border: none;
+      all: unset;
     }
   }
   .nav-bar {

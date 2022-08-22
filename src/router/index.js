@@ -5,7 +5,7 @@ const routes = [
   {
     path: '/',
     name:'main',
-    redirect: { name: 'sightseeing-spot' }
+    redirect: { path: '/spot/Taipei', }
   },
   {
     path: '/spot/:area',
@@ -13,9 +13,19 @@ const routes = [
     component : SightSeeing
   },
   {
+    path: '/spot/:area/:id',
+    name: 'individual-spot',
+    component : ()=>import('./../views/IndividualSpot.vue')
+  },
+  {
     path: '/food/:area',
     name: 'tasty-food',
     component : ()=>import('./../views/TastyFood.vue')
+  },
+  {
+    path: '/food/:area/:id',
+    name: 'individual-food',
+    component : ()=>import('./../views/IndividualFood.vue')
   },
   {
     path: '/hostel/:area',
@@ -23,9 +33,19 @@ const routes = [
     component : ()=>import('./../views/HostelStay.vue')
   },
   {
+    path: '/hostel/:area/:id',
+    name: 'individual-hostel',
+    component : ()=>import('./../views/IndividualHostel.vue')
+  },
+  {
     path: '/activity/:area',
     name: 'activity-fun',
     component : ()=>import('./../views/ActivityFun.vue')
+  },
+  {
+    path: '/activity/:area/:id',
+    name: 'individual-activity',
+    component : ()=>import('./../views/IndividualActivity.vue')
   },
   {
     path: '/:pathMatch(.*)*',

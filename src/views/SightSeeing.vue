@@ -1,6 +1,8 @@
 <template>
   <div class="container">
     <MainHeader />
+    <div v-if="isSlideLoading">Loading ...</div>
+    <SlideSpot v-else :spots="scenicSpots" />
     <div v-if="isLoading">Loading ...</div>
     <SpotList v-else :cardList="cardList" />
   </div>
@@ -8,14 +10,25 @@
 
 <script>
 import MainHeader from "../components/MainHead.vue";
+import SlideSpot from "./../components/SlideSpot.vue";
 import SpotList from "./../components/SpotList.vue";
 import spotAPI from "./../apis/scenicSpot";
 import { mapState } from "vuex";
+import { ref, reactive } from "vue";
 const $ = require("jquery");
 export default {
   components: {
     MainHeader,
     SpotList,
+    SlideSpot,
+  },
+  setup() {
+    const cardList = reactive([]);
+    const isSlideLoading = ref(false);
+    return {
+      cardList,
+      isSlideLoading,
+    };
   },
   data() {
     return {
@@ -24,8 +37,8 @@ export default {
       selectName: "",
       category: "",
       categoryName: "",
-      cardList: [],
       isLoading: false,
+      scenicSpots: [],
     };
   },
   computed: {
@@ -33,8 +46,9 @@ export default {
   },
   created() {
     this.GetAuthorizationHeader();
+    this.fetchSlideSpot();
     const { area } = this.$route.params;
-    this.fetchSpot(area);
+    this.fetchSpots(area);
   },
   methods: {
     GetAuthorizationHeader() {
@@ -60,14 +74,14 @@ export default {
         },
       });
     },
-    async fetchSpot(area) {
+    async fetchSpots(area) {
       this.isLoading = true;
-      const { data, statusText } = await spotAPI.getSpot({
+      const { data } = await spotAPI.getSpot({
         area: area,
-        select: this.select
+        select: this.selectName
           ? `${encodeURIComponent("$")}select=${this.selectName}&`
           : "",
-        filter: this.filter
+        filter: this.category
           ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
               `contains(${this.category}, '${this.categoryName}')`
             )}&`
@@ -75,17 +89,52 @@ export default {
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
       });
-      if (statusText === "OK") {
-        console.log("串接成功!!!");
-      }
-      this.cardList = data;
+      this.cardList = data.map((card) => ({
+        id: card.ScenicSpotID,
+        address: card.Address ? card.Address : "",
+        city: card.City,
+        class1: card.Class1 ? card.Class1 : "",
+        class2: card.Class2 ? card.Class2 : "",
+        class3: card.Class3 ? card.Class3 : "",
+        description: card.DescriptionDetail,
+        openTime: card.OpenTime,
+        phone: card.Phone,
+        picture: card.Picture ? card.Picture : {},
+        position: card.Position,
+        name: card.ScenicSpotName,
+      }));
       this.isLoading = false;
+    },
+    async fetchSlideSpot() {
+      this.isSlideLoading = true;
+      let top = 300;
+      let skip = Math.floor(Math.random() * 50) + 1;
+      console.log(skip);
+      let count = 60;
+      let tempObj = [];
+      const { data } = await spotAPI.getAllSpot({
+        top: `${encodeURIComponent("$")}top=${top}&`,
+        skip: `${encodeURIComponent("$")}skip=${skip}&`,
+      });
+      for (let i = 0; i < 5; i++) {
+        tempObj.push({
+          id: data[skip].ScenicSpotID,
+          address: data[skip].Address ? data[skip].Address : "",
+          city: data[skip].City,
+          picture: data[skip].Picture ? data[skip].Picture : {},
+          name: data[skip].ScenicSpotName,
+        });
+        skip += count;
+      }
+      this.scenicSpots = tempObj;
+      this.isSlideLoading = false;
     },
   },
   watch: {
     $route(route) {
       if (route.name === "sightseeing-spot") {
-        this.fetchSpot(route.params.area);
+        this.fetchSpots(route.params.area);
+        this.fetchSlideSpot();
       }
     },
   },

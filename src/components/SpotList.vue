@@ -1,60 +1,70 @@
 <template>
-  <SlideSpot />
   <div class="card-list mt-3">
-    <div
-      v-for="spot in spots"
-      :key="spot.ScenicSpotID"
-      class="spot-card card mb-2"
-    >
+    <div v-for="spot in spots" :key="spot.id" class="spot-card card mb-2">
       <div class="card-image">
-        <img
-          :src="
-            spot.Picture.PictureUrl1 ||
-            'https://i.postimg.cc/nz9DxX0W/other-User.png'
-          "
-          class="card-img-top"
-          :alt="spot.ScenicSpotName"
-        />
+        <router-link
+          :to="{
+            name: `individual-${category.enTitle}`,
+            params: { area: $route.params.area, id: spot.id },
+          }"
+        >
+          <img
+            :src="
+              spot.picture.PictureUrl1 ||
+              'https://i.postimg.cc/nz9DxX0W/other-User.png'
+            "
+            class="card-img-top"
+            :alt="spot.name"
+          />
+        </router-link>
       </div>
       <div class="spot-body card-body">
-        <h3 class="card-title">{{ spot.ScenicSpotName }}</h3>
-        <p class="card-text">{{ spot.City }}</p>
-        <div class="badge-box">
-          <span
-            v-if="spot.Class1"
-            class="badge-item badge bg-secondary me-2 p-2 mb-1"
-            ># {{ spot.Class1 }}</span
-          >
-          <span
-            v-if="spot.Class2"
-            class="badge-item badge bg-secondary me-2 p-2 mb-1"
-            ># {{ spot.Class2 }}</span
-          >
-          <span v-if="spot.Class3" class="badge-item badge bg-secondary p-2"
-            ># {{ spot.Class3 }}</span
-          >
-        </div>
+        <router-link
+          :to="{
+            name: `individual-${category.enTitle}`,
+            params: { area: $route.params.area, id: spot.id },
+          }"
+        >
+          <h3 class="card-title">{{ spot.name }}</h3>
+          <p class="card-text">{{ spot.city }}</p>
+          <div class="badge-box">
+            <span
+              v-if="spot.class1"
+              class="badge-item badge bg-secondary me-2 p-2 mb-1"
+              ># {{ spot.class1 }}</span
+            >
+            <span
+              v-if="spot.class2"
+              class="badge-item badge bg-secondary me-2 p-2 mb-1"
+              ># {{ spot.class2 }}</span
+            >
+            <span v-if="spot.class3" class="badge-item badge bg-secondary p-2"
+              ># {{ spot.class3 }}</span
+            >
+          </div>
+        </router-link>
       </div>
     </div>
   </div>
+  <!-- <dir v-else>
+    <h1 class="mt-3">抱歉，目前無資料</h1>
+  </dir> -->
 </template>
 
 <script>
-import SlideSpot from "./../components/SlideSpot.vue";
-// import spotAPI from "./../apis/scenicSpot";
+import { mapState } from "vuex";
+import { reactive } from "vue";
 export default {
-  components: {
-    SlideSpot,
-  },
   props: {
     cardList: {
       type: Array,
       required: true,
     },
   },
-  data() {
+  setup() {
+    const spots = reactive([]);
     return {
-      spots: [],
+      spots,
     };
   },
   created() {
@@ -65,6 +75,9 @@ export default {
       this.spots = this.cardList;
     },
   },
+  computed: {
+    ...mapState(["category"]),
+  },
 };
 </script>
 
@@ -72,18 +85,23 @@ export default {
 .spot-card {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  grid-template-rows: 18vh;
+  grid-template-rows: auto;
   overflow: hidden;
   padding: 0.5rem;
 }
 .card-image {
+  align-self: center;
   width: 30vw;
-  height: 100%;
+  height: 30vw;
   overflow: hidden;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease-in-out;
+  }
+  img:hover {
+    transform: scale(1.2);
   }
 }
 .badge-item {

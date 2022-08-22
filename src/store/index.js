@@ -6,7 +6,12 @@ export default createStore({
       name:"台北市",
       enName:"Taipei"
     },
-    categoryTitle:"景點"
+    category:{
+      title:"景點",
+      enTitle:"spot"
+    }
+    // categoryTitle:"景點",
+    // categoryEnTitle:"spot"
   },
   getters: {
   },
@@ -17,9 +22,12 @@ export default createStore({
         ...currentArea
       }
     },
-    setCategoryTitle(state,categoryTitle){
-      state.categoryTitle = categoryTitle
-    }
+    setCategoryTitle(state,category){
+      state.category = {
+        ...state.category,
+        ...category
+      }
+    },
   },
   actions: {
   },

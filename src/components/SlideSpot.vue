@@ -6,12 +6,12 @@
   >
     <div class="carousel-indicators">
       <button
-        v-for="spot in spots"
-        :key="spot.ScenicSpotID"
-        :class="{ active: spots[0].ScenicSpotID === spot.ScenicSpotID }"
+        v-for="spot in spotSlide"
+        :key="spot.id"
+        :class="{ active: spotSlide.indexOf(spot) === 0 }"
         type="button"
         data-bs-target="#carouselExampleCaptions"
-        :data-bs-slide-to="spots.indexOf(spot)"
+        :data-bs-slide-to="spotSlide.indexOf(spot)"
         aria-current="true"
         aria-label="Slide 1"
       ></button>
@@ -19,15 +19,15 @@
     <div class="carousel-inner">
       <!-- 輪播圖片 -->
       <div
-        v-for="spot in spots"
-        :key="spot.ScenicSpotID"
-        :class="{ active: spots[0].ScenicSpotID === spot.ScenicSpotID }"
+        v-for="spot in spotSlide"
+        :key="spot.id"
+        :class="{ active: spotSlide.indexOf(spot) === 0 }"
         class="carousel-item"
       >
         <div class="image-box">
           <img
             :src="
-              spot.Picture.PictureUrl1 ||
+              spot.picture.PictureUrl1 ||
               'https://i.postimg.cc/nz9DxX0W/other-User.png'
             "
             class="d-block w-100"
@@ -35,8 +35,15 @@
           />
         </div>
         <div class="carousel-caption">
-          <h2>{{ spot.ScenicSpotName }}</h2>
-          <p>{{ spot.Address }}</p>
+          <router-link
+            :to="{
+              name: `individual-${category.enTitle}`,
+              params: { area: $route.params.area, id: spot.id },
+            }"
+          >
+            <h3>{{ spot.name }}</h3>
+            <p>{{ spot.address }}</p>
+          </router-link>
         </div>
       </div>
     </div>
@@ -62,29 +69,30 @@
 </template>
 
 <script>
-import spotAPI from "./../apis/scenicSpot";
+import { mapState } from "vuex";
+import { ref } from "vue";
 export default {
-  data() {
+  props: {
+    spots: {
+      type: Array,
+    },
+  },
+  setup() {
+    const spotSlide = ref([]);
     return {
-      spots: [],
+      spotSlide,
     };
   },
   created() {
     this.fetchSlideSpot();
   },
   methods: {
-    async fetchSlideSpot() {
-      let top = 1;
-      let skip = 0;
-      for (let i = 0; i < 5; i++) {
-        const { data } = await spotAPI.getAllSpot({
-          top: `${encodeURIComponent("$")}top=${top}&`,
-          skip: `${encodeURIComponent("$")}skip=${skip}&`,
-        });
-        skip += 500;
-        this.spots.push(data[0]);
-      }
+    fetchSlideSpot() {
+      this.spotSlide = this.spots;
     },
+  },
+  computed: {
+    ...mapState(["category"]),
   },
 };
 </script>
@@ -94,11 +102,11 @@ export default {
   border-radius: 30px;
   box-shadow: 0px 3px 20px 2px #5b5b5b;
   overflow: hidden;
-  margin-top: 235px !important;
+  margin-top: 245px !important;
 }
 .image-box {
   width: 100%;
-  height: 40vw;
+  height: 45vw;
   img {
     width: 100%;
     height: 100%;
