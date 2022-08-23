@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <MainHeader />
-    <div v-if="isLoading">Loading ...</div>
+    <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="foodSlide" />
     <div v-if="isLoading">Loading ...</div>
     <SpotList v-else :cardList="foodList" />
@@ -14,7 +14,7 @@ import SlideSpot from "./../components/SlideSpot.vue";
 import SpotList from "./../components/SpotList.vue";
 import foodAPI from "./../apis/tastyFood";
 import { mapState } from "vuex";
-import { reactive } from "vue";
+import { ref, reactive } from "vue";
 export default {
   components: {
     MainHeader,
@@ -23,8 +23,10 @@ export default {
   },
   setup() {
     const foodList = reactive([]);
+    const isSlideLoading = ref(false);
     return {
       foodList,
+      isSlideLoading,
     };
   },
   data() {
@@ -42,9 +44,9 @@ export default {
     ...mapState(["currentArea"]),
   },
   created() {
-    this.fetchFoodSlide();
     const { area } = this.$route.params;
     this.fetchRestaurant(area);
+    this.fetchFoodSlide(area);
   },
   methods: {
     async fetchRestaurant(area) {
@@ -76,36 +78,44 @@ export default {
         position: card.Position,
         name: card.RestaurantName,
       }));
+      this.isLoading = false;
     },
-    async fetchFoodSlide() {
-      let top = 1000;
-      let skip = Math.floor(Math.random() * 100) + 1;
-      let count = 200;
-      let tempObj = [];
-      const { data } = await foodAPI.getAllRestaurant({
+    async fetchFoodSlide(area) {
+      this.isSlideLoading = true;
+      let top = 20;
+      let skip = Math.floor(Math.random() * 9) + 1;
+      let count = top / 5;
+      const tempObj = [];
+      const { data } = await foodAPI.getRestaurant({
+        area: area,
+        select: "",
+        filter: "",
         top: `${encodeURIComponent("$")}top=${top}&`,
         skip: `${encodeURIComponent("$")}skip=${skip}&`,
       });
-      for (let i = 0; i < 5; i++) {
-        tempObj.push({
-          id: data[skip].RestaurantID,
-          address: data[skip].Address ? data[skip].Address : "",
-          city: data[skip].City,
-          picture: data[skip].Picture ? data[skip].Picture : {},
-          name: data[skip].RestaurantName,
-        });
-        skip += count;
+      if (data.length !== 0) {
+        for (let i = 0; i < 5; i++) {
+          tempObj.push({
+            id: data[count - 1].RestaurantID,
+            address: data[count - 1].Address ? data[count - 1].Address : "",
+            city: data[count - 1].City,
+            picture: data[count - 1].Picture ? data[count - 1].Picture : {},
+            name: data[count - 1].RestaurantName,
+          });
+          count += top / 5;
+        }
+        this.foodSlide = tempObj;
+      } else {
+        this.foodSlide = [];
       }
-
-      this.foodSlide = tempObj;
-      this.isLoading = false;
+      this.isSlideLoading = false;
     },
   },
   watch: {
     $route(route) {
       if (route.name === "tasty-food") {
         this.fetchRestaurant(route.params.area);
-        this.fetchFoodSlide();
+        this.fetchFoodSlide(route.params.area);
       }
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="card-list mt-3">
+  <div v-if="spots.length !== 0" class="card-list mt-3">
     <div v-for="spot in spots" :key="spot.id" class="spot-card card mb-2">
       <div class="card-image">
         <router-link
@@ -46,9 +46,9 @@
       </div>
     </div>
   </div>
-  <!-- <dir v-else>
-    <h1 class="mt-3">抱歉，目前無資料</h1>
-  </dir> -->
+  <div v-else class="text-center mt-3">
+    <h2 class="mt-3">抱歉，目前無相關資料</h2>
+  </div>
 </template>
 
 <script>

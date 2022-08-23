@@ -23,6 +23,7 @@ body {
   height: 100%;
   font-family: "Roboto", sans-serif;
   font-size: 16px;
+  scroll-behavior: smooth;
 }
 ul,
 li {

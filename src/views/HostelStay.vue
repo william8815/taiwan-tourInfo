@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <MainHead />
-    <div v-if="isLoading">Loading ...</div>
+    <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="hotelSlide" />
     <div v-if="isLoading">Loading ...</div>
     <SpotList v-else :cardList="hotelList" />
@@ -14,7 +14,7 @@ import SlideSpot from "./../components/SlideSpot.vue";
 import SpotList from "./../components/SpotList.vue";
 import hotelAPI from "./../apis/hotelStay";
 import { mapState } from "vuex";
-import { reactive } from "vue";
+import { ref, reactive } from "vue";
 export default {
   components: {
     MainHead,
@@ -23,8 +23,10 @@ export default {
   },
   setup() {
     const hotelList = reactive([]);
+    const isSlideLoading = ref(false);
     return {
       hotelList,
+      isSlideLoading,
     };
   },
   data() {
@@ -42,9 +44,9 @@ export default {
     ...mapState(["currentArea"]),
   },
   created() {
-    this.fetchHotelSlide();
     const { area } = this.$route.params;
     this.fetchHotel(area);
+    this.fetchHotelSlide(area);
   },
   methods: {
     async fetchHotel(area) {
@@ -76,35 +78,40 @@ export default {
         position: card.Position,
         name: card.HotelName,
       }));
+      this.isLoading = false;
     },
-    async fetchHotelSlide() {
-      let top = 1000;
-      let skip = Math.floor(Math.random() * 150) + 1;
-      let count = 200;
+    async fetchHotelSlide(area) {
+      this.isSlideLoading = true;
+      let top = 25;
+      let skip = Math.floor(Math.random() * 9) + 1;
+      let count = top / 5;
       let tempObj = [];
-      const { data } = await hotelAPI.getAllHotel({
+      const { data } = await hotelAPI.getHotel({
+        area: area,
+        select: "",
+        filter: "",
         top: `${encodeURIComponent("$")}top=${top}&`,
         skip: `${encodeURIComponent("$")}skip=${skip}&`,
       });
       for (let i = 0; i < 5; i++) {
         tempObj.push({
-          id: data[skip].HotelID,
-          address: data[skip].Address ? data[skip].Address : "",
-          city: data[skip].City,
-          picture: data[skip].Picture ? data[skip].Picture : {},
-          name: data[skip].HotelName,
+          id: data[count - 1].HotelID,
+          address: data[count - 1].Address ? data[count - 1].Address : "",
+          city: data[count - 1].City,
+          picture: data[count - 1].Picture ? data[count - 1].Picture : {},
+          name: data[count - 1].HotelName,
         });
-        skip += count;
+        count += top / 5;
       }
       this.hotelSlide = tempObj;
-      this.isLoading = false;
+      this.isSlideLoading = false;
     },
   },
   watch: {
     $route(route) {
       if (route.name === "hostel-stay") {
         this.fetchHotel(route.params.area);
-        this.fetchHotelSlide();
+        this.fetchHotelSlide(route.params.area);
       }
     },
   },

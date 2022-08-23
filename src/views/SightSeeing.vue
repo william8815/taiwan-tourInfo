@@ -46,9 +46,9 @@ export default {
   },
   created() {
     this.GetAuthorizationHeader();
-    this.fetchSlideSpot();
     const { area } = this.$route.params;
     this.fetchSpots(area);
+    this.fetchSlideSpot(area);
   },
   methods: {
     GetAuthorizationHeader() {
@@ -105,26 +105,29 @@ export default {
       }));
       this.isLoading = false;
     },
-    async fetchSlideSpot() {
+    async fetchSlideSpot(area) {
       this.isSlideLoading = true;
-      let top = 300;
-      let skip = Math.floor(Math.random() * 50) + 1;
-      console.log(skip);
-      let count = 60;
+      let top = 50;
+      let skip = Math.floor(Math.random() * 9) + 1;
+      let count = top / 5;
       let tempObj = [];
-      const { data } = await spotAPI.getAllSpot({
+      const { data } = await spotAPI.getSpot({
+        area: area,
+        select: "",
+        filter: "",
         top: `${encodeURIComponent("$")}top=${top}&`,
         skip: `${encodeURIComponent("$")}skip=${skip}&`,
       });
+      console.log(data);
       for (let i = 0; i < 5; i++) {
         tempObj.push({
-          id: data[skip].ScenicSpotID,
-          address: data[skip].Address ? data[skip].Address : "",
-          city: data[skip].City,
-          picture: data[skip].Picture ? data[skip].Picture : {},
-          name: data[skip].ScenicSpotName,
+          id: data[count - 1].ScenicSpotID,
+          address: data[count - 1].Address ? data[count - 1].Address : "",
+          city: data[count - 1].City,
+          picture: data[count - 1].Picture ? data[count - 1].Picture : {},
+          name: data[count - 1].ScenicSpotName,
         });
-        skip += count;
+        count += top / 5;
       }
       this.scenicSpots = tempObj;
       this.isSlideLoading = false;
@@ -134,7 +137,7 @@ export default {
     $route(route) {
       if (route.name === "sightseeing-spot") {
         this.fetchSpots(route.params.area);
-        this.fetchSlideSpot();
+        this.fetchSlideSpot(route.params.area);
       }
     },
   },

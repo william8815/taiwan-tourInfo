@@ -70,7 +70,7 @@
         </ul>
       </div>
     </div>
-    <div ref="switchBox" class="switch-box pb-3">
+    <div ref="switchBox" class="switch-box pb-3" :class="{ focus: inputFocus }">
       <!-- selectbar -->
       <div class="select my-3">
         <label for="area">請選擇區域 : </label>
@@ -100,6 +100,9 @@
             <span>{{ category.title }}</span>
           </div>
           <input
+            @focus="handleInputFocus"
+            @blur="handleInputBlur"
+            v-model="keyword"
             class="search__input"
             type="text"
             name="search"
@@ -110,6 +113,7 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </div>
         </div>
+        <SearchPage v-if="inputFocus" :search_keyword="keyword" />
       </div>
     </div>
   </div>
@@ -117,6 +121,7 @@
 
 <script>
 import { v4 as uuidv4 } from "uuid";
+import SearchPage from "./../components/SearchPage.vue";
 import { mapState } from "vuex";
 import { ref } from "@vue/reactivity";
 const taiwanSection = [
@@ -232,14 +237,21 @@ const taiwanSection = [
   },
 ];
 export default {
+  components: {
+    SearchPage,
+  },
   setup() {
     const switchBox = ref(null);
     const header = ref(null);
     const prevScroll = ref(0);
+    const keyword = ref("");
+    const inputFocus = ref(false);
     return {
       switchBox,
       header,
       prevScroll,
+      keyword,
+      inputFocus,
     };
   },
   data() {
@@ -324,10 +336,19 @@ export default {
       }
       this.prevScroll = scroll;
     },
+    handleInputFocus() {
+      this.inputFocus = true;
+    },
+    handleInputBlur() {
+      this.inputFocus = false;
+    },
   },
   watch: {
     $route() {
       this.changeTitle(this.$route.name);
+    },
+    keyword(value) {
+      this.keyword = value;
     },
   },
 };
@@ -355,7 +376,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 999;
     background-color: #fff;
   }
 }
@@ -366,10 +387,14 @@ export default {
   right: 0;
   background-color: #fff;
   border-bottom: 1px solid #fff;
-  z-index: 1000;
+  z-index: 999;
   &.hight-line {
     border-bottom: 1px solid #a4a4a4;
     transition: bottom 0.4s ease-in;
+  }
+  &.focus {
+    position: fixed;
+    top: 0;
   }
 }
 
@@ -423,8 +448,9 @@ export default {
 }
 .search {
   text-align: center;
+  position: relative;
   &__box {
-    width: 70vw;
+    width: 90vw;
     margin: 0 auto;
     position: relative;
     border: 2px solid #a4a4a4;

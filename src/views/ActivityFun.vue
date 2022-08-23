@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <MainHead />
-    <div v-if="isLoading">Loading ...</div>
+    <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="activitySlide" />
     <div v-if="isLoading">Loading ...</div>
     <SpotList v-else :cardList="activityList" />
@@ -14,7 +14,7 @@ import SlideSpot from "./../components/SlideSpot.vue";
 import SpotList from "./../components/SpotList.vue";
 import ActivityAPI from "./../apis/activityFun";
 import { mapState } from "vuex";
-import { reactive } from "vue";
+import { ref, reactive } from "vue";
 export default {
   components: {
     MainHead,
@@ -23,8 +23,10 @@ export default {
   },
   setup() {
     const activityList = reactive([]);
+    const isSlideLoading = ref(false);
     return {
       activityList,
+      isSlideLoading,
     };
   },
   data() {
@@ -42,9 +44,9 @@ export default {
     ...mapState(["currentArea"]),
   },
   created() {
-    this.fetchActivitySlide();
     const { area } = this.$route.params;
     this.fetchActivity(area);
+    this.fetchActivitySlide(area);
   },
   methods: {
     async fetchActivity(area) {
@@ -76,35 +78,52 @@ export default {
         position: card.Position,
         name: card.ActivityName,
       }));
+      this.isLoading = false;
     },
-    async fetchActivitySlide() {
-      let top = 150;
-      let skip = Math.floor(Math.random() * 25) + 1;
-      let count = 30;
+    async fetchActivitySlide(area) {
+      this.isSlideLoading = true;
+      let top = 30;
+      let skip = 0;
       const tempObj = [];
-      const { data } = await ActivityAPI.getAllActivity({
+      const { data } = await ActivityAPI.getActivity({
+        area: area,
+        select: "",
+        filter: "",
         top: `${encodeURIComponent("$")}top=${top}&`,
         skip: `${encodeURIComponent("$")}skip=${skip}&`,
       });
-      for (let i = 0; i < 5; i++) {
-        tempObj.push({
-          id: data[skip].ActivityID,
-          address: data[skip].Address ? data[skip].Address : "",
-          city: data[skip].City,
-          picture: data[skip].Picture ? data[skip].Picture : {},
-          name: data[skip].ActivityName,
-        });
-        skip += count;
+      if (data.length >= 5) {
+        for (let i = data.length - 1; i > data.length - 6; i--) {
+          tempObj.unshift({
+            id: data[i].ActivityID,
+            address: data[i].Address ? data[i].Address : "",
+            city: data[i].City,
+            picture: data[i].Picture ? data[i].Picture : {},
+            name: data[i].ActivityName,
+          });
+          this.activitySlide = tempObj;
+        }
+      } else {
+        for (let i = 0; i < data.length; i++) {
+          tempObj.unshift({
+            id: data[i].ActivityID,
+            address: data[i].Address ? data[i].Address : "",
+            city: data[i].City,
+            picture: data[i].Picture ? data[i].Picture : {},
+            name: data[i].ActivityName,
+          });
+          this.activitySlide = tempObj;
+        }
+        console.log("hello2");
       }
-      this.activitySlide = tempObj;
-      this.isLoading = false;
+      this.isSlideLoading = false;
     },
   },
   watch: {
     $route(route) {
       if (route.name === "activity-fun") {
         this.fetchActivity(route.params.area);
-        this.fetchActivitySlide();
+        this.fetchActivitySlide(route.params.area);
       }
     },
   },
