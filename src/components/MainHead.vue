@@ -70,9 +70,9 @@
         </ul>
       </div>
     </div>
-    <div ref="switchBox" class="switch-box pb-3" :class="{ focus: inputFocus }">
+    <div ref="switchBox" class="switch-box" :class="{ focus: inputFocus }">
       <!-- searchbar -->
-      <div class="search py-2" :class="{ focus: inputFocus }">
+      <div class="search" :class="{ focus: inputFocus }">
         <div
           class="search__box d-flex justify-content-center align-items-center"
         >
@@ -357,8 +357,8 @@ export default {
     },
   },
   watch: {
-    $route() {
-      this.changeTitle(this.$route.name);
+    $route(route) {
+      this.changeTitle(route.name);
     },
     keyword(value) {
       this.keyword = value;
@@ -370,7 +370,7 @@ export default {
 <style lang="scss" scoped>
 .header {
   position: fixed;
-  height: 245px;
+  height: 205px;
   top: 0;
   left: 0;
   right: 0;
@@ -378,7 +378,7 @@ export default {
   background-color: #fff;
   transition: height 0.4s ease-in-out;
   &.cut-height {
-    height: 181px;
+    height: 151px;
   }
 }
 .section {
@@ -444,6 +444,7 @@ export default {
   border-bottom: 1px solid #fff;
   z-index: 999;
   padding: 1rem 0 !important;
+  padding-bottom: 0 !important;
   &.hight-line {
     border-bottom: 1px solid #a4a4a4;
     transition: bottom 0.4s ease-in;
@@ -464,6 +465,7 @@ export default {
 .search {
   text-align: center;
   position: relative;
+  padding: 0 1rem !important;
   &__box {
     width: 90vw;
     margin: 0 auto;
@@ -509,9 +511,9 @@ export default {
 // 平板
 @media screen and (min-width: 480px) {
   .header {
-    height: 270px;
+    height: 240px;
     &.cut-height {
-      height: 167px;
+      height: 137px;
     }
   }
   .section {
@@ -557,13 +559,20 @@ export default {
     }
   }
 }
+@media screen and (min-width: 768px) {
+  .search {
+    &__box {
+      width: 70vw;
+    }
+  }
+}
 // PC
 @media screen and (min-width: 960px) {
   .header {
-    height: 215px;
+    height: 195px;
     border-bottom: 1px solid #a4a4a4;
     &.cut-height {
-      height: 215px;
+      height: 195px;
     }
   }
   .section {
@@ -593,6 +602,11 @@ export default {
       li {
         margin-left: 0.5rem;
       }
+    }
+  }
+  .search {
+    &__box {
+      width: 50vw;
     }
   }
 }

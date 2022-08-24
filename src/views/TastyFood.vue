@@ -4,7 +4,9 @@
     <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="foodSlide" />
     <div v-if="isLoading">Loading ...</div>
-    <SpotList v-else :cardList="foodList" />
+    <div v-else ref="restaurantList">
+      <SpotList :cardList="foodList" />
+    </div>
   </div>
 </template>
 
@@ -24,9 +26,11 @@ export default {
   setup() {
     const foodList = reactive([]);
     const isSlideLoading = ref(false);
+    const restaurantList = ref(null);
     return {
       foodList,
       isSlideLoading,
+      restaurantList,
     };
   },
   data() {
@@ -48,6 +52,15 @@ export default {
     this.fetchRestaurant(area);
     this.fetchFoodSlide(area);
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
   methods: {
     async fetchRestaurant(area) {
       this.isLoading = true;
@@ -66,7 +79,7 @@ export default {
       });
       this.foodList = data.map((card) => ({
         id: card.RestaurantID,
-        address: card.Address ? card.Address : "",
+        address: card.Address ? card.Address : card.City,
         city: card.City,
         class1: card.Class ? card.Class : "",
         class2: "",
@@ -97,7 +110,9 @@ export default {
         for (let i = 0; i < 5; i++) {
           tempObj.push({
             id: data[count - 1].RestaurantID,
-            address: data[count - 1].Address ? data[count - 1].Address : "",
+            address: data[count - 1].Address
+              ? data[count - 1].Address
+              : data[count - 1].City,
             city: data[count - 1].City,
             picture: data[count - 1].Picture ? data[count - 1].Picture : {},
             name: data[count - 1].RestaurantName,
@@ -110,10 +125,26 @@ export default {
       }
       this.isSlideLoading = false;
     },
+    handleScroll() {
+      let scrollHeight = this.restaurantList.scrollHeight;
+      let clientHeight = document.body.clientHeight;
+      let scrollTop = Math.floor(
+        Math.abs(this.restaurantList.getBoundingClientRect().top)
+      );
+      let distance = 2;
+
+      if (scrollTop + clientHeight >= scrollHeight - distance) {
+        this.top += 12;
+        // this.skip += 12;
+        this.fetchRestaurant(this.$route.params.area);
+      }
+    },
   },
   watch: {
     $route(route) {
       if (route.name === "tasty-food") {
+        this.top = 12;
+        this.skip = 12;
         this.fetchRestaurant(route.params.area);
         this.fetchFoodSlide(route.params.area);
       }

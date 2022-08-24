@@ -4,7 +4,9 @@
     <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="scenicSpots" />
     <div v-if="isLoading">Loading ...</div>
-    <SpotList v-else :cardList="cardList" />
+    <div v-else ref="sightList">
+      <SpotList :cardList="cardList" />
+    </div>
   </div>
 </template>
 
@@ -25,9 +27,11 @@ export default {
   setup() {
     const cardList = reactive([]);
     const isSlideLoading = ref(false);
+    const sightList = ref(null);
     return {
       cardList,
       isSlideLoading,
+      sightList,
     };
   },
   data() {
@@ -49,6 +53,15 @@ export default {
     const { area } = this.$route.params;
     this.fetchSpots(area);
     this.fetchSlideSpot(area);
+  },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll, true);
   },
   methods: {
     GetAuthorizationHeader() {
@@ -91,7 +104,7 @@ export default {
       });
       this.cardList = data.map((card) => ({
         id: card.ScenicSpotID,
-        address: card.Address ? card.Address : "",
+        address: card.Address ? card.Address : card.City,
         city: card.City,
         class1: card.Class1 ? card.Class1 : "",
         class2: card.Class2 ? card.Class2 : "",
@@ -103,6 +116,7 @@ export default {
         position: card.Position,
         name: card.ScenicSpotName,
       }));
+      console.log(this.cardList);
       this.isLoading = false;
     },
     async fetchSlideSpot(area) {
@@ -121,7 +135,9 @@ export default {
       for (let i = 0; i < 5; i++) {
         tempObj.push({
           id: data[count - 1].ScenicSpotID,
-          address: data[count - 1].Address ? data[count - 1].Address : "",
+          address: data[count - 1].Address
+            ? data[count - 1].Address
+            : data[count - 1].City,
           city: data[count - 1].City,
           picture: data[count - 1].Picture ? data[count - 1].Picture : {},
           name: data[count - 1].ScenicSpotName,
@@ -131,10 +147,26 @@ export default {
       this.scenicSpots = tempObj;
       this.isSlideLoading = false;
     },
+    handleScroll() {
+      let scrollHeight = this.sightList.scrollHeight;
+      let clientHeight = document.body.clientHeight;
+      let scrollTop = Math.floor(
+        Math.abs(this.sightList.getBoundingClientRect().top)
+      );
+      let distance = 2;
+      if (scrollTop + clientHeight >= scrollHeight - distance) {
+        this.top += 12;
+        // this.skip += 12;
+        this.fetchSpots(this.$route.params.area);
+      }
+    },
   },
   watch: {
     $route(route) {
+      console.log(route);
       if (route.name === "sightseeing-spot") {
+        this.top = 12;
+        this.skip = 0;
         this.fetchSpots(route.params.area);
         this.fetchSlideSpot(route.params.area);
       }

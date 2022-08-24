@@ -4,7 +4,9 @@
     <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="hotelSlide" />
     <div v-if="isLoading">Loading ...</div>
-    <SpotList v-else :cardList="hotelList" />
+    <div v-else ref="hostelList">
+      <SpotList :cardList="hotelList" />
+    </div>
   </div>
 </template>
 
@@ -24,9 +26,11 @@ export default {
   setup() {
     const hotelList = reactive([]);
     const isSlideLoading = ref(false);
+    const hostelList = ref(null);
     return {
       hotelList,
       isSlideLoading,
+      hostelList,
     };
   },
   data() {
@@ -48,6 +52,15 @@ export default {
     this.fetchHotel(area);
     this.fetchHotelSlide(area);
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
   methods: {
     async fetchHotel(area) {
       this.isLoading = true;
@@ -66,7 +79,7 @@ export default {
       });
       this.hotelList = data.map((card) => ({
         id: card.HotelID,
-        address: card.Address ? card.Address : "",
+        address: card.Address ? card.Address : card.City,
         city: card.City,
         class1: card.Class ? card.Class : "",
         class2: "",
@@ -96,7 +109,9 @@ export default {
       for (let i = 0; i < 5; i++) {
         tempObj.push({
           id: data[count - 1].HotelID,
-          address: data[count - 1].Address ? data[count - 1].Address : "",
+          address: data[count - 1].Address
+            ? data[count - 1].Address
+            : data[count - 1].City,
           city: data[count - 1].City,
           picture: data[count - 1].Picture ? data[count - 1].Picture : {},
           name: data[count - 1].HotelName,
@@ -106,10 +121,25 @@ export default {
       this.hotelSlide = tempObj;
       this.isSlideLoading = false;
     },
+    handleScroll() {
+      let scrollHeight = this.hostelList.scrollHeight;
+      let clientHeight = document.body.clientHeight;
+      let scrollTop = Math.floor(
+        Math.abs(this.hostelList.getBoundingClientRect().top)
+      );
+      let distance = 2;
+      if (scrollTop + clientHeight >= scrollHeight - distance) {
+        this.top += 12;
+        // this.skip += 12;
+        this.fetchHotel(this.$route.params.area);
+      }
+    },
   },
   watch: {
     $route(route) {
       if (route.name === "hostel-stay") {
+        this.top = 12;
+        this.skip = 0;
         this.fetchHotel(route.params.area);
         this.fetchHotelSlide(route.params.area);
       }

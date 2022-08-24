@@ -84,11 +84,5 @@ export default {
       this.isLoading = false;
     },
   },
-  // watch: {
-  //   $route(route) {
-  //     this.fetchOneSpot(route.params.area);
-  //     console.log(route);
-  //   },
-  // },
 };
 </script>

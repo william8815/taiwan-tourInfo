@@ -3,7 +3,7 @@
     <div class="search p-3 mb-2 bg-white text-dark">
       <div class="search-result">
         <div v-if="isLoading"></div>
-        <ul v-else class="result-list px-0">
+        <ul v-else ref="resultList" class="result-list px-0">
           <router-link
             v-for="result in searchResult"
             :key="result.id"
@@ -53,16 +53,29 @@ export default {
     const top = ref(10);
     const skip = ref(0);
     const isLoading = ref(false);
+    const resultList = ref(null);
+    const search = ref(null);
     return {
       keyword,
       searchResult,
       top,
       skip,
       isLoading,
+      resultList,
+      search,
     };
   },
   created() {
     this.fetchSearchList(this.keyword);
+  },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll, true);
   },
   computed: {
     ...mapState(["category"]),
@@ -196,6 +209,21 @@ export default {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+      }
+    },
+    handleScroll() {
+      let scrollHeight = this.resultList.scrollHeight + 122;
+      let clientHeight = document.body.clientHeight;
+      let scrollTop = Math.floor(
+        Math.abs(this.resultList.getBoundingClientRect().top)
+      );
+      let distance = 68;
+      console.log(scrollHeight - distance, scrollTop + clientHeight);
+      if (scrollTop + clientHeight >= scrollHeight - distance) {
+        this.top += 12;
+        console.log(this.top);
+        // this.skip += 12;
+        this.fetchSearchList(this.keyword);
       }
     },
   },

@@ -63,8 +63,10 @@ export default {
   },
   setup() {
     const spots = reactive([]);
+    const spotAll = reactive([]);
     return {
       spots,
+      spotAll,
     };
   },
   created() {

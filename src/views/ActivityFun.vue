@@ -4,7 +4,9 @@
     <div v-if="isSlideLoading">Loading ...</div>
     <SlideSpot v-else :spots="activitySlide" />
     <div v-if="isLoading">Loading ...</div>
-    <SpotList v-else :cardList="activityList" />
+    <div v-else ref="activity">
+      <SpotList :cardList="activityList" />
+    </div>
   </div>
 </template>
 
@@ -24,9 +26,11 @@ export default {
   setup() {
     const activityList = reactive([]);
     const isSlideLoading = ref(false);
+    const activity = ref(null);
     return {
       activityList,
       isSlideLoading,
+      activity,
     };
   },
   data() {
@@ -48,6 +52,15 @@ export default {
     this.fetchActivity(area);
     this.fetchActivitySlide(area);
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll, true);
+  },
   methods: {
     async fetchActivity(area) {
       this.isLoading = true;
@@ -66,7 +79,7 @@ export default {
       });
       this.activityList = data.map((card) => ({
         id: card.ActivityID,
-        address: card.Address ? card.Address : "",
+        address: card.Address ? card.Address : card.City,
         city: card.City,
         class1: card.Class1 ? card.Class1 : "",
         class2: card.Class2 ? card.Class2 : "",
@@ -96,7 +109,7 @@ export default {
         for (let i = data.length - 1; i > data.length - 6; i--) {
           tempObj.unshift({
             id: data[i].ActivityID,
-            address: data[i].Address ? data[i].Address : "",
+            address: data[i].Address ? data[i].Address : data[i].City,
             city: data[i].City,
             picture: data[i].Picture ? data[i].Picture : {},
             name: data[i].ActivityName,
@@ -118,10 +131,25 @@ export default {
       }
       this.isSlideLoading = false;
     },
+    handleScroll() {
+      let scrollHeight = this.activity.scrollHeight;
+      let clientHeight = document.body.clientHeight;
+      let scrollTop = Math.floor(
+        Math.abs(this.activity.getBoundingClientRect().top)
+      );
+      let distance = 2;
+      if (scrollTop + clientHeight >= scrollHeight - distance) {
+        this.top += 12;
+        // this.skip += 12;
+        this.fetchActivity(this.$route.params.area);
+      }
+    },
   },
   watch: {
     $route(route) {
       if (route.name === "activity-fun") {
+        this.top = 12;
+        this.skip = 0;
         this.fetchActivity(route.params.area);
         this.fetchActivitySlide(route.params.area);
       }
