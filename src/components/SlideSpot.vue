@@ -107,7 +107,7 @@ export default {
   border-radius: 30px;
   box-shadow: 0px 3px 20px 2px #5b5b5b;
   overflow: hidden;
-  margin-top: 245px !important;
+  margin-top: 265px !important;
 }
 .image-box {
   width: 100%;
@@ -137,13 +137,13 @@ export default {
 // 平板
 @media screen and (min-width: 480px) {
   .slide-box {
-    margin-top: 275px !important;
+    margin-top: 295px !important;
   }
 }
 // PC
 @media screen and (min-width: 960px) {
   .slide-box {
-    margin-top: 225px !important;
+    margin-top: 245px !important;
   }
 }
 </style>

@@ -118,7 +118,6 @@ export default {
         top: `${encodeURIComponent("$")}top=${top}&`,
         skip: `${encodeURIComponent("$")}skip=${skip}&`,
       });
-      console.log(data);
       for (let i = 0; i < 5; i++) {
         tempObj.push({
           id: data[count - 1].ScenicSpotID,

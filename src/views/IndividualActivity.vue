@@ -48,15 +48,12 @@ export default {
     };
   },
   created() {
-    const { area } = this.$route.params;
-    this.fetchOneHostel(area);
+    this.fetchOneHostel();
   },
   methods: {
-    async fetchOneHostel(area) {
+    async fetchOneHostel() {
       this.isLoading = true;
-      const { data, statusText } = await activityAPI.getActivity({
-        area: area,
-        select: "",
+      const { data, statusText } = await activityAPI.getAllActivity({
         filter: `${encodeURIComponent("$")}filter=${encodeURIComponent(
           `contains(ActivityID, '${this.$route.params.id}')`
         )}&`,

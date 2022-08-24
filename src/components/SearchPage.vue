@@ -4,23 +4,32 @@
       <div class="search-result">
         <div v-if="isLoading"></div>
         <ul v-else class="result-list px-0">
-          <li v-for="result in searchResult" :key="result.id" class="list-item">
-            <div>
-              <p>
-                <b>{{ result.name }}</b>
-              </p>
-              <p>{{ result.city }}</p>
-            </div>
-            <div class="image">
-              <img
-                :src="
-                  result.picture.PictureUrl1 ||
-                  'https://i.postimg.cc/nz9DxX0W/other-User.png'
-                "
-                alt=""
-              />
-            </div>
-          </li>
+          <router-link
+            v-for="result in searchResult"
+            :key="result.id"
+            :to="{
+              name: `individual-${category.enTitle}`,
+              params: { area: $route.params.area, id: result.id },
+            }"
+          >
+            <li class="list-item">
+              <div>
+                <p>
+                  <b>{{ result.name }}</b>
+                </p>
+                <p>{{ result.city }}</p>
+              </div>
+              <div class="image">
+                <img
+                  :src="
+                    result.picture.PictureUrl1 ||
+                    'https://i.postimg.cc/nz9DxX0W/other-User.png'
+                  "
+                  alt=""
+                />
+              </div>
+            </li>
+          </router-link>
         </ul>
       </div>
     </div>
@@ -80,21 +89,25 @@ export default {
     async searchSpot(keyword) {
       try {
         this.isLoading = true;
-        const { data } = await spotAPI.getAllSpot({
-          filter: this.category
-            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                `contains(ScenicSpotName, '${keyword}')`
-              )}&`
-            : "",
-          top: `${encodeURIComponent("$")}top=${this.top}&`,
-          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-        });
-        this.searchResult = data.map((result) => ({
-          id: result.ScenicSpotID,
-          name: result.ScenicSpotName,
-          city: result.Address,
-          picture: result.Picture ? result.Picture : {},
-        }));
+        if (keyword.trim().length !== 0) {
+          const { data } = await spotAPI.getAllSpot({
+            filter: this.category
+              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                  `contains(ScenicSpotName, '${keyword}')`
+                )}&`
+              : "",
+            top: `${encodeURIComponent("$")}top=${this.top}&`,
+            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+          });
+          this.searchResult = data.map((result) => ({
+            id: result.ScenicSpotID,
+            name: result.ScenicSpotName,
+            city: result.Address,
+            picture: result.Picture ? result.Picture : {},
+          }));
+        } else {
+          this.searchResult = [];
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -104,21 +117,25 @@ export default {
     async searchFood(keyword) {
       try {
         this.isLoading = true;
-        const { data } = await foodAPI.getAllRestaurant({
-          filter: this.category
-            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                `contains(RestaurantName, '${keyword}')`
-              )}&`
-            : "",
-          top: `${encodeURIComponent("$")}top=${this.top}&`,
-          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-        });
-        this.searchResult = data.map((result) => ({
-          id: result.RestaurantID,
-          name: result.RestaurantName,
-          city: result.Address,
-          picture: result.Picture ? result.Picture : {},
-        }));
+        if (keyword.trim().length !== 0) {
+          const { data } = await foodAPI.getAllRestaurant({
+            filter: this.category
+              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                  `contains(RestaurantName, '${keyword}')`
+                )}&`
+              : "",
+            top: `${encodeURIComponent("$")}top=${this.top}&`,
+            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+          });
+          this.searchResult = data.map((result) => ({
+            id: result.RestaurantID,
+            name: result.RestaurantName,
+            city: result.Address,
+            picture: result.Picture ? result.Picture : {},
+          }));
+        } else {
+          this.searchResult = [];
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -128,21 +145,25 @@ export default {
     async searchHostel(keyword) {
       try {
         this.isLoading = true;
-        const { data } = await hotelAPI.getAllHotel({
-          filter: this.category
-            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                `contains(HotelName, '${keyword}')`
-              )}&`
-            : "",
-          top: `${encodeURIComponent("$")}top=${this.top}&`,
-          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-        });
-        this.searchResult = data.map((result) => ({
-          id: result.HotelID,
-          name: result.HotelName,
-          city: result.Address,
-          picture: result.Picture ? result.Picture : {},
-        }));
+        if (keyword.trim().length !== 0) {
+          const { data } = await hotelAPI.getAllHotel({
+            filter: this.category
+              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                  `contains(HotelName, '${keyword}')`
+                )}&`
+              : "",
+            top: `${encodeURIComponent("$")}top=${this.top}&`,
+            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+          });
+          this.searchResult = data.map((result) => ({
+            id: result.HotelID,
+            name: result.HotelName,
+            city: result.Address,
+            picture: result.Picture ? result.Picture : {},
+          }));
+        } else {
+          this.searchResult = [];
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -152,21 +173,25 @@ export default {
     async searchActivity(keyword) {
       try {
         this.isLoading = true;
-        const { data } = await activityAPI.getAllActivity({
-          filter: this.category
-            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                `contains(ActivityName, '${keyword}')`
-              )}&`
-            : "",
-          top: `${encodeURIComponent("$")}top=${this.top}&`,
-          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-        });
-        this.searchResult = data.map((result) => ({
-          id: result.ActivityID,
-          name: result.ActivityName,
-          city: result.Address,
-          picture: result.Picture ? result.Picture : {},
-        }));
+        if (keyword.trim().length !== 0) {
+          const { data } = await activityAPI.getAllActivity({
+            filter: this.category
+              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                  `contains(ActivityName, '${keyword}')`
+                )}&`
+              : "",
+            top: `${encodeURIComponent("$")}top=${this.top}&`,
+            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+          });
+          this.searchResult = data.map((result) => ({
+            id: result.ActivityID,
+            name: result.ActivityName,
+            city: result.Address,
+            picture: result.Picture ? result.Picture : {},
+          }));
+        } else {
+          this.searchResult = [];
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -188,7 +213,7 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  top: 66px;
+  top: 90px;
   z-index: 999;
   text-align: start;
 }

@@ -13,7 +13,7 @@ const routes = [
     component : SightSeeing
   },
   {
-    path: '/spot/:area/:id',
+    path: '/spot/:id',
     name: 'individual-spot',
     component : ()=>import('./../views/IndividualSpot.vue')
   },
@@ -23,7 +23,7 @@ const routes = [
     component : ()=>import('./../views/TastyFood.vue')
   },
   {
-    path: '/food/:area/:id',
+    path: '/food/:id',
     name: 'individual-food',
     component : ()=>import('./../views/IndividualFood.vue')
   },
@@ -33,7 +33,7 @@ const routes = [
     component : ()=>import('./../views/HostelStay.vue')
   },
   {
-    path: '/hostel/:area/:id',
+    path: '/hostel/:id',
     name: 'individual-hostel',
     component : ()=>import('./../views/IndividualHostel.vue')
   },
@@ -43,7 +43,7 @@ const routes = [
     component : ()=>import('./../views/ActivityFun.vue')
   },
   {
-    path: '/activity/:area/:id',
+    path: '/activity/:id',
     name: 'individual-activity',
     component : ()=>import('./../views/IndividualActivity.vue')
   },

@@ -71,8 +71,41 @@
       </div>
     </div>
     <div ref="switchBox" class="switch-box pb-3" :class="{ focus: inputFocus }">
+      <!-- searchbar -->
+      <div class="search py-2" :class="{ focus: inputFocus }">
+        <div
+          class="search__box d-flex justify-content-center align-items-center"
+        >
+          <div class="search__title">
+            <span>{{ category.title }}</span>
+          </div>
+          <input
+            @focus="handleInputFocus"
+            v-model="keyword"
+            class="search__input"
+            type="text"
+            name="search"
+            id=""
+            :placeholder="'搜尋台灣' + category.title"
+          />
+          <div class="search__btn">
+            <i
+              v-if="inputFocus"
+              @click="cleanKeyword"
+              class="fa-solid fa-xmark"
+            ></i>
+            <i v-else class="fa-solid fa-magnifying-glass"></i>
+          </div>
+        </div>
+        <SearchPage v-if="inputFocus" :search_keyword="keyword" />
+        <i
+          v-if="inputFocus"
+          @click="handleInputBlur"
+          class="cancel-btn fa-solid fa-arrow-left"
+        ></i>
+      </div>
       <!-- selectbar -->
-      <div class="select my-3">
+      <div v-if="!inputFocus" class="select my-2">
         <label for="area">請選擇區域 : </label>
         <select
           id="area"
@@ -90,30 +123,6 @@
             {{ area.name }}
           </option>
         </select>
-      </div>
-      <!-- searchbar -->
-      <div class="search">
-        <div
-          class="search__box d-flex justify-content-center align-items-center"
-        >
-          <div class="search__title">
-            <span>{{ category.title }}</span>
-          </div>
-          <input
-            @focus="handleInputFocus"
-            @blur="handleInputBlur"
-            v-model="keyword"
-            class="search__input"
-            type="text"
-            name="search"
-            id=""
-            :placeholder="'搜尋台灣' + category.title"
-          />
-          <div class="search__btn">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </div>
-        </div>
-        <SearchPage v-if="inputFocus" :search_keyword="keyword" />
       </div>
     </div>
   </div>
@@ -341,6 +350,10 @@ export default {
     },
     handleInputBlur() {
       this.inputFocus = false;
+      this.keyword = "";
+    },
+    cleanKeyword() {
+      this.keyword = "";
     },
   },
   watch: {
@@ -357,15 +370,15 @@ export default {
 <style lang="scss" scoped>
 .header {
   position: fixed;
-  height: 225px;
+  height: 245px;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 999;
   background-color: #fff;
   transition: height 0.4s ease-in-out;
   &.cut-height {
-    height: 161px;
+    height: 181px;
   }
 }
 .section {
@@ -378,23 +391,6 @@ export default {
     right: 0;
     z-index: 999;
     background-color: #fff;
-  }
-}
-.switch-box {
-  position: absolute;
-  bottom: 0px;
-  left: 0;
-  right: 0;
-  background-color: #fff;
-  border-bottom: 1px solid #fff;
-  z-index: 999;
-  &.hight-line {
-    border-bottom: 1px solid #a4a4a4;
-    transition: bottom 0.4s ease-in;
-  }
-  &.focus {
-    position: fixed;
-    top: 0;
   }
 }
 
@@ -439,6 +435,25 @@ export default {
     }
   }
 }
+.switch-box {
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  z-index: 999;
+  padding: 1rem 0 !important;
+  &.hight-line {
+    border-bottom: 1px solid #a4a4a4;
+    transition: bottom 0.4s ease-in;
+  }
+  &.focus {
+    position: fixed;
+    top: 0;
+  }
+}
+
 .select {
   text-align: center;
   .select-box {
@@ -481,13 +496,22 @@ export default {
     background-color: #a4a4a4;
     color: #fff;
   }
+  &.focus {
+    padding-top: 2rem !important;
+  }
+}
+.cancel-btn {
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  font-size: 1.25rem;
 }
 // 平板
 @media screen and (min-width: 480px) {
   .header {
-    height: 255px;
+    height: 270px;
     &.cut-height {
-      height: 141px;
+      height: 167px;
     }
   }
   .section {
@@ -536,10 +560,10 @@ export default {
 // PC
 @media screen and (min-width: 960px) {
   .header {
-    height: 190px;
+    height: 215px;
     border-bottom: 1px solid #a4a4a4;
     &.cut-height {
-      height: 190px;
+      height: 215px;
     }
   }
   .section {
@@ -558,6 +582,9 @@ export default {
     &.hight-line {
       all: unset;
     }
+    &.focus {
+      all: unset;
+    }
   }
   .nav-bar {
     position: static;
@@ -567,9 +594,6 @@ export default {
         margin-left: 0.5rem;
       }
     }
-  }
-  .select {
-    margin-top: 0 !important;
   }
 }
 </style>

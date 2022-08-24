@@ -48,15 +48,12 @@ export default {
     };
   },
   created() {
-    const { area } = this.$route.params;
-    this.fetchOneHostel(area);
+    this.fetchOneHostel();
   },
   methods: {
-    async fetchOneHostel(area) {
+    async fetchOneHostel() {
       this.isLoading = true;
-      const { data, statusText } = await hotelAPI.getHotel({
-        area: area,
-        select: "",
+      const { data, statusText } = await hotelAPI.getAllHotel({
         filter: `${encodeURIComponent("$")}filter=${encodeURIComponent(
           `contains(HotelID, '${this.$route.params.id}')`
         )}&`,

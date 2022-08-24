@@ -48,15 +48,12 @@ export default {
     };
   },
   created() {
-    const { area } = this.$route.params;
-    this.fetchOneFood(area);
+    this.fetchOneFood();
   },
   methods: {
-    async fetchOneFood(area) {
+    async fetchOneFood() {
       this.isLoading = true;
-      const { data, statusText } = await foodAPI.getRestaurant({
-        area: area,
-        select: "",
+      const { data, statusText } = await foodAPI.getAllRestaurant({
         filter: `${encodeURIComponent("$")}filter=${encodeURIComponent(
           `contains(RestaurantID, '${this.$route.params.id}')`
         )}&`,

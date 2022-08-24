@@ -48,15 +48,12 @@ export default {
     };
   },
   created() {
-    const { area } = this.$route.params;
-    this.fetchOneSpot(area);
+    this.fetchOneSpot();
   },
   methods: {
-    async fetchOneSpot(area) {
+    async fetchOneSpot() {
       this.isLoading = true;
-      const { data, statusText } = await spotAPI.getSpot({
-        area: area,
-        select: "",
+      const { data, statusText } = await spotAPI.getAllSpot({
         filter: `${encodeURIComponent("$")}filter=${encodeURIComponent(
           `contains(ScenicSpotID, '${this.$route.params.id}')`
         )}&`,
