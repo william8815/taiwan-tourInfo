@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <MainHead />
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="activity" />
     <h2>更多旅館 :</h2>
@@ -10,14 +9,12 @@
 </template>
 
 <script>
-import MainHead from "./../components/MainHead.vue";
 import InfoSection from "../components/InfoSection.vue";
 // import MoreSection from "./../components/MoreSection.vue";
 import activityAPI from "./../apis/activityFun";
 import { ref, reactive } from "vue";
 export default {
   components: {
-    MainHead,
     InfoSection,
     // MoreSection,
   },

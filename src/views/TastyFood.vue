@@ -64,6 +64,7 @@ export default {
   methods: {
     async fetchRestaurant(area) {
       this.isLoading = true;
+      let tempArr = [];
       const { data } = await foodAPI.getRestaurant({
         area: area,
         select: this.selectName
@@ -77,7 +78,7 @@ export default {
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
       });
-      this.foodList = data.map((card) => ({
+      tempArr = data.map((card) => ({
         id: card.RestaurantID,
         address: card.Address ? card.Address : card.City,
         city: card.City,
@@ -91,6 +92,7 @@ export default {
         position: card.Position,
         name: card.RestaurantName,
       }));
+      this.foodList.push(...tempArr);
       this.isLoading = false;
     },
     async fetchFoodSlide(area) {
@@ -132,11 +134,13 @@ export default {
         Math.abs(this.restaurantList.getBoundingClientRect().top)
       );
       let distance = 2;
-
       if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.top += 12;
-        // this.skip += 12;
-        this.fetchRestaurant(this.$route.params.area);
+        this.skip += 12;
+        window.removeEventListener("scroll", this.handleScroll, true);
+        setTimeout(() => {
+          this.fetchRestaurant(this.$route.params.area);
+          window.addEventListener("scroll", this.handleScroll, true);
+        }, 1000);
       }
     },
   },
@@ -144,7 +148,7 @@ export default {
     $route(route) {
       if (route.name === "tasty-food") {
         this.top = 12;
-        this.skip = 12;
+        this.skip = 0;
         this.fetchRestaurant(route.params.area);
         this.fetchFoodSlide(route.params.area);
       }

@@ -10,8 +10,6 @@ export default createStore({
       title:"景點",
       enTitle:"spot"
     }
-    // categoryTitle:"景點",
-    // categoryEnTitle:"spot"
   },
   getters: {
   },

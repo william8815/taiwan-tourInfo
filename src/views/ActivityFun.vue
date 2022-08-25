@@ -64,6 +64,7 @@ export default {
   methods: {
     async fetchActivity(area) {
       this.isLoading = true;
+      let tempArr = [];
       const { data } = await ActivityAPI.getActivity({
         area: area,
         select: this.selectName
@@ -77,7 +78,7 @@ export default {
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
       });
-      this.activityList = data.map((card) => ({
+      tempArr = data.map((card) => ({
         id: card.ActivityID,
         address: card.Address ? card.Address : card.City,
         city: card.City,
@@ -91,6 +92,7 @@ export default {
         position: card.Position,
         name: card.ActivityName,
       }));
+      this.activityList.push(...tempArr);
       this.isLoading = false;
     },
     async fetchActivitySlide(area) {
@@ -139,9 +141,12 @@ export default {
       );
       let distance = 2;
       if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.top += 12;
-        // this.skip += 12;
-        this.fetchActivity(this.$route.params.area);
+        this.skip += 12;
+        window.removeEventListener("scroll", this.handleScroll, true);
+        setTimeout(() => {
+          this.fetchActivity(this.$route.params.area);
+          window.addEventListener("scroll", this.handleScroll, true);
+        }, 1000);
       }
     },
   },

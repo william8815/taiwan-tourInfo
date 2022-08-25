@@ -278,6 +278,7 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.scrollHide, true);
+    this.changeArea();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.scrollHide, true);
@@ -289,7 +290,6 @@ export default {
     fetchArea() {
       this.taiwanArea = taiwanSection;
       this.enName = this.$route.params.area;
-      this.changeArea();
       this.title = this.changeTitle(this.$route.name);
     },
     changeArea() {

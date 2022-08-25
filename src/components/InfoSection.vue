@@ -1,6 +1,6 @@
 <template>
   <div class="info-section">
-    <div class="title py-2">
+    <div class="title py-3">
       <i @click="$router.back()" class="fa-solid fa-arrow-left px-3"></i>
       <span>{{ info.name }}</span>
     </div>
@@ -97,10 +97,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.info-section {
-  margin-top: 235px;
-}
 .title {
+  padding: 1rem 0;
   font-size: 1.5rem;
   color: var(--font-color);
   font-weight: 700;

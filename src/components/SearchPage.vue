@@ -82,45 +82,49 @@ export default {
   },
   methods: {
     fetchSearchList(keyword) {
-      switch (this.category.enTitle) {
-        case "spot":
-          this.searchSpot(keyword);
-          break;
-        case "food":
-          this.searchFood(keyword);
-          break;
-        case "hostel":
-          this.searchHostel(keyword);
-          break;
-        case "activity":
-          this.searchActivity(keyword);
-          break;
-        default:
-          break;
+      if (keyword.trim().length !== 0) {
+        switch (this.category.enTitle) {
+          case "spot":
+            this.searchSpot(keyword);
+            break;
+          case "food":
+            this.searchFood(keyword);
+            break;
+          case "hostel":
+            this.searchHostel(keyword);
+            break;
+          case "activity":
+            this.searchActivity(keyword);
+            break;
+          default:
+            break;
+        }
+      } else {
+        this.searchResult = [];
       }
     },
     async searchSpot(keyword) {
       try {
         this.isLoading = true;
-        if (keyword.trim().length !== 0) {
-          const { data } = await spotAPI.getAllSpot({
-            filter: this.category
-              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                  `contains(ScenicSpotName, '${keyword}')`
-                )}&`
-              : "",
-            top: `${encodeURIComponent("$")}top=${this.top}&`,
-            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-          });
-          this.searchResult = data.map((result) => ({
-            id: result.ScenicSpotID,
-            name: result.ScenicSpotName,
-            city: result.Address,
-            picture: result.Picture ? result.Picture : {},
-          }));
-        } else {
-          this.searchResult = [];
-        }
+        let tempArr = [];
+
+        const { data } = await spotAPI.getAllSpot({
+          filter: this.category
+            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                `contains(ScenicSpotName, '${keyword}')`
+              )}&`
+            : "",
+          top: `${encodeURIComponent("$")}top=${this.top}&`,
+          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+        });
+        tempArr = data.map((result) => ({
+          id: result.ScenicSpotID,
+          name: result.ScenicSpotName,
+          city: result.Address,
+          picture: result.Picture ? result.Picture : {},
+        }));
+        this.searchResult.push(...tempArr);
+
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -130,25 +134,24 @@ export default {
     async searchFood(keyword) {
       try {
         this.isLoading = true;
-        if (keyword.trim().length !== 0) {
-          const { data } = await foodAPI.getAllRestaurant({
-            filter: this.category
-              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                  `contains(RestaurantName, '${keyword}')`
-                )}&`
-              : "",
-            top: `${encodeURIComponent("$")}top=${this.top}&`,
-            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-          });
-          this.searchResult = data.map((result) => ({
-            id: result.RestaurantID,
-            name: result.RestaurantName,
-            city: result.Address,
-            picture: result.Picture ? result.Picture : {},
-          }));
-        } else {
-          this.searchResult = [];
-        }
+        let tempArr = [];
+
+        const { data } = await foodAPI.getAllRestaurant({
+          filter: this.category
+            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                `contains(RestaurantName, '${keyword}')`
+              )}&`
+            : "",
+          top: `${encodeURIComponent("$")}top=${this.top}&`,
+          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+        });
+        tempArr = data.map((result) => ({
+          id: result.RestaurantID,
+          name: result.RestaurantName,
+          city: result.Address,
+          picture: result.Picture ? result.Picture : {},
+        }));
+        this.searchResult.push(...tempArr);
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -158,25 +161,24 @@ export default {
     async searchHostel(keyword) {
       try {
         this.isLoading = true;
-        if (keyword.trim().length !== 0) {
-          const { data } = await hotelAPI.getAllHotel({
-            filter: this.category
-              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                  `contains(HotelName, '${keyword}')`
-                )}&`
-              : "",
-            top: `${encodeURIComponent("$")}top=${this.top}&`,
-            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-          });
-          this.searchResult = data.map((result) => ({
-            id: result.HotelID,
-            name: result.HotelName,
-            city: result.Address,
-            picture: result.Picture ? result.Picture : {},
-          }));
-        } else {
-          this.searchResult = [];
-        }
+        let tempArr = [];
+
+        const { data } = await hotelAPI.getAllHotel({
+          filter: this.category
+            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                `contains(HotelName, '${keyword}')`
+              )}&`
+            : "",
+          top: `${encodeURIComponent("$")}top=${this.top}&`,
+          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+        });
+        tempArr = data.map((result) => ({
+          id: result.HotelID,
+          name: result.HotelName,
+          city: result.Address,
+          picture: result.Picture ? result.Picture : {},
+        }));
+        this.searchResult.push(...tempArr);
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -186,25 +188,25 @@ export default {
     async searchActivity(keyword) {
       try {
         this.isLoading = true;
-        if (keyword.trim().length !== 0) {
-          const { data } = await activityAPI.getAllActivity({
-            filter: this.category
-              ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
-                  `contains(ActivityName, '${keyword}')`
-                )}&`
-              : "",
-            top: `${encodeURIComponent("$")}top=${this.top}&`,
-            skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
-          });
-          this.searchResult = data.map((result) => ({
-            id: result.ActivityID,
-            name: result.ActivityName,
-            city: result.Address,
-            picture: result.Picture ? result.Picture : {},
-          }));
-        } else {
-          this.searchResult = [];
-        }
+        let tempArr = [];
+
+        const { data } = await activityAPI.getAllActivity({
+          filter: this.category
+            ? `${encodeURIComponent("$")}filter=${encodeURIComponent(
+                `contains(ActivityName, '${keyword}')`
+              )}&`
+            : "",
+          top: `${encodeURIComponent("$")}top=${this.top}&`,
+          skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+        });
+        tempArr = data.map((result) => ({
+          id: result.ActivityID,
+          name: result.ActivityName,
+          city: result.Address,
+          picture: result.Picture ? result.Picture : {},
+        }));
+        this.searchResult.push(...tempArr);
+
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -218,12 +220,13 @@ export default {
         Math.abs(this.resultList.getBoundingClientRect().top)
       );
       let distance = 68;
-      console.log(scrollHeight - distance, scrollTop + clientHeight);
       if (scrollTop + clientHeight >= scrollHeight - distance) {
         this.top += 12;
-        console.log(this.top);
-        // this.skip += 12;
-        this.fetchSearchList(this.keyword);
+        window.removeEventListener("scroll", this.handleScroll, true);
+        setTimeout(() => {
+          this.fetchSearchList(this.keyword);
+          window.addEventListener("scroll", this.handleScroll, true);
+        }, 1000);
       }
     },
   },

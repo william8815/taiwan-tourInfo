@@ -1,5 +1,5 @@
 <template>
-  <div class="card-list d-flex">
+  <div class="card-list">
     <div
       v-for="spot in moreSpot"
       :key="spot.id"
@@ -58,13 +58,15 @@ export default {
 
 <style lang="scss" scoped>
 .card-list {
-  overflow-x: auto;
-  white-space: nowrap;
-  --webkit-overflow-scrolling: touch;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 .spot-card {
-  width: 30vw;
+  width: 300px;
   height: 150px;
+  img {
+    width: 100%;
+  }
 }
 </style>

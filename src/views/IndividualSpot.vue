@@ -1,25 +1,25 @@
 <template>
   <div class="container">
-    <MainHead />
+    <!-- <MainHead /> -->
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="spot" />
     <h2>更多景點 :</h2>
-    <!-- <div v-if="isLoading">...Loading</div>
-    <MoreSection v-else :more_spot="moreSpot" /> -->
+    <div v-if="isMoreLoading">...Loading</div>
+    <MoreSection v-else :more_spot="moreSpot" />
   </div>
 </template>
 
 <script>
-import MainHead from "./../components/MainHead.vue";
+// import MainHead from "./../components/MainHead.vue";
 import InfoSection from "../components/InfoSection.vue";
-// import MoreSection from "./../components/MoreSection.vue";
+import MoreSection from "./../components/MoreSection.vue";
 import spotAPI from "./../apis/scenicSpot";
 import { ref, reactive } from "vue";
 export default {
   components: {
-    MainHead,
+    // MainHead,
     InfoSection,
-    // MoreSection,
+    MoreSection,
   },
   setup() {
     const top = ref(1);
@@ -39,23 +39,34 @@ export default {
     });
     const moreSpot = reactive([]);
     const isLoading = ref(false);
+    const isMoreLoading = ref(false);
     return {
       top,
       skip,
       spot,
       isLoading,
       moreSpot,
+      isMoreLoading,
     };
   },
   created() {
-    this.fetchOneSpot();
+    const { id } = this.$route.params;
+    this.fetchOneSpot(id);
+    this.fetchMoreSpot();
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchOneSpot(id);
+    this.fetchMoreSpot();
+    next();
   },
   methods: {
-    async fetchOneSpot() {
+    async fetchOneSpot(id) {
       this.isLoading = true;
+      console.log(this.$route.name);
       const { data, statusText } = await spotAPI.getAllSpot({
         filter: `${encodeURIComponent("$")}filter=${encodeURIComponent(
-          `contains(ScenicSpotID, '${this.$route.params.id}')`
+          `contains(ScenicSpotID, '${id}')`
         )}&`,
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
@@ -78,12 +89,35 @@ export default {
       };
       this.isLoading = false;
     },
+    async fetchMoreSpot() {
+      this.isMoreLoading = true;
+      const { data, statusText } = await spotAPI.getAllSpot({
+        filter: "",
+        top: `${encodeURIComponent("$")}top=${10}&`,
+        skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+      });
+      if (statusText === "OK") {
+        console.log("串接成功!!!");
+      }
+      this.moreSpot = data.map((spot) => {
+        if (spot.ScenicSpotID !== this.$route.params.id) {
+          return {
+            id: spot.ScenicSpotID,
+            address: spot.Address ? spot.Address : "",
+            class1: spot.Class1 ? spot.Class1 : "",
+            class2: spot.Class2 ? spot.Class2 : "",
+            class3: spot.Class3 ? spot.Class3 : "",
+            description: spot.DescriptionDetail,
+            openTime: spot.OpenTime,
+            phone: spot.Phone,
+            picture: spot.Picture ? spot.Picture : {},
+            position: spot.Position,
+            name: spot.ScenicSpotName,
+          };
+        }
+      });
+      this.isMoreLoading = false;
+    },
   },
-  // watch: {
-  //   $route(route) {
-  //     this.fetchOneSpot(route.params.area);
-  //     console.log(route);
-  //   },
-  // },
 };
 </script>

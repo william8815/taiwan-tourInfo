@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <MainHead />
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="hostel" />
     <h2>更多旅館 :</h2>
@@ -10,14 +9,12 @@
 </template>
 
 <script>
-import MainHead from "./../components/MainHead.vue";
 import InfoSection from "../components/InfoSection.vue";
 // import MoreSection from "./../components/MoreSection.vue";
 import hotelAPI from "./../apis/hotelStay";
 import { ref, reactive } from "vue";
 export default {
   components: {
-    MainHead,
     InfoSection,
     // MoreSection,
   },
@@ -82,11 +79,5 @@ export default {
       this.isLoading = false;
     },
   },
-  // watch: {
-  //   $route(route) {
-  //     this.fetchOneSpot(route.params.area);
-  //     console.log(route);
-  //   },
-  // },
 };
 </script>

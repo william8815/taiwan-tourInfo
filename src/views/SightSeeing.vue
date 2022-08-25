@@ -89,6 +89,7 @@ export default {
     },
     async fetchSpots(area) {
       this.isLoading = true;
+      let tempArr = [];
       const { data } = await spotAPI.getSpot({
         area: area,
         select: this.selectName
@@ -102,7 +103,7 @@ export default {
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
       });
-      this.cardList = data.map((card) => ({
+      tempArr = data.map((card) => ({
         id: card.ScenicSpotID,
         address: card.Address ? card.Address : card.City,
         city: card.City,
@@ -116,7 +117,7 @@ export default {
         position: card.Position,
         name: card.ScenicSpotName,
       }));
-      console.log(this.cardList);
+      this.cardList.push(...tempArr);
       this.isLoading = false;
     },
     async fetchSlideSpot(area) {
@@ -155,18 +156,21 @@ export default {
       );
       let distance = 2;
       if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.top += 12;
-        // this.skip += 12;
-        this.fetchSpots(this.$route.params.area);
+        this.skip += 12;
+        window.removeEventListener("scroll", this.handleScroll, true);
+        setTimeout(() => {
+          this.fetchSpots(this.$route.params.area);
+          window.addEventListener("scroll", this.handleScroll, true);
+        }, 1000);
       }
     },
   },
   watch: {
     $route(route) {
-      console.log(route);
       if (route.name === "sightseeing-spot") {
         this.top = 12;
         this.skip = 0;
+        this.cardList.splice(0, this.cardList.length);
         this.fetchSpots(route.params.area);
         this.fetchSlideSpot(route.params.area);
       }
