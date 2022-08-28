@@ -6,6 +6,22 @@
     <div v-if="isLoading">Loading ...</div>
     <div v-else ref="activity">
       <SpotList :cardList="activityList" />
+      <div class="btn-section">
+        <button
+          @click="showMore"
+          class="moreBtn btn btn-primary"
+          :disabled="isLoading"
+        >
+          <div
+            v-if="isProcessing"
+            class="spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span v-else>更多景點</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,10 +43,12 @@ export default {
     const activityList = reactive([]);
     const isSlideLoading = ref(false);
     const activity = ref(null);
+    const isProcessing = ref(false);
     return {
       activityList,
       isSlideLoading,
       activity,
+      isProcessing,
     };
   },
   data() {
@@ -51,15 +69,6 @@ export default {
     const { area } = this.$route.params;
     this.fetchActivity(area);
     this.fetchActivitySlide(area);
-  },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll, true);
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.handleScroll, true);
-  },
-  unmounted() {
-    window.removeEventListener("scroll", this.handleScroll, true);
   },
   methods: {
     async fetchActivity(area) {
@@ -133,21 +142,13 @@ export default {
       }
       this.isSlideLoading = false;
     },
-    handleScroll() {
-      let scrollHeight = this.activity.scrollHeight;
-      let clientHeight = document.body.clientHeight;
-      let scrollTop = Math.floor(
-        Math.abs(this.activity.getBoundingClientRect().top)
-      );
-      let distance = 2;
-      if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.skip += 12;
-        window.removeEventListener("scroll", this.handleScroll, true);
-        setTimeout(() => {
-          this.fetchActivity(this.$route.params.area);
-          window.addEventListener("scroll", this.handleScroll, true);
-        }, 1000);
-      }
+    showMore() {
+      this.isProcessing = true;
+      this.skip += 12;
+      setTimeout(() => {
+        this.fetchActivity(this.$route.params.area);
+        this.isProcessing = false;
+      }, 1000);
     },
   },
   watch: {
@@ -155,6 +156,7 @@ export default {
       if (route.name === "activity-fun") {
         this.top = 12;
         this.skip = 0;
+        this.activityList.splice(0, this.activityList.length);
         this.fetchActivity(route.params.area);
         this.fetchActivitySlide(route.params.area);
       }
@@ -162,3 +164,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.btn-section {
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+}
+</style>

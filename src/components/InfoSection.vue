@@ -138,7 +138,6 @@ export default {
 }
 @media screen and (min-width: 480px) {
   .info-section {
-    margin-top: 265px;
     padding-bottom: 1rem;
   }
   .map-info {
@@ -167,9 +166,6 @@ export default {
 }
 
 @media screen and (min-width: 768px) {
-  .info-section {
-    margin-top: 255px;
-  }
   .grid-layout {
     display: grid;
     grid-template-areas:

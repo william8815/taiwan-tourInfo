@@ -77,6 +77,7 @@
 import { mapState } from "vuex";
 import { ref } from "vue";
 export default {
+  name: "slideSpot",
   props: {
     spots: {
       type: Array,
@@ -145,6 +146,7 @@ export default {
   .slide-box {
     margin-top: 235px !important;
     width: 60vw;
+    max-width: 1200px;
     margin: 0 auto;
   }
   .image-box {

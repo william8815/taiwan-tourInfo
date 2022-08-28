@@ -222,7 +222,7 @@ export default {
       let distance = 68;
       if (scrollTop + clientHeight >= scrollHeight - distance) {
         this.top += 12;
-        window.removeEventListener("scroll", this.handleScroll, true);
+        window.removeEventListener("scroll", this.handleScroll, false);
         setTimeout(() => {
           this.fetchSearchList(this.keyword);
           window.addEventListener("scroll", this.handleScroll, true);
@@ -240,16 +240,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::-webkit-scrollbar {
+  /* make scrollbar transparent */
+  width: 0px;
+  background: transparent;
+}
 .search-section {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 90px;
+  left: calc(5vw + 52px);
+  right: calc(5vw + 40px);
+  top: 82px;
   z-index: 999;
   text-align: start;
+  border-right: 2px solid #a4a4a4;
+  border-left: 2px solid #a4a4a4;
 }
 .search-result {
-  height: calc(100vh - 160px);
+  height: calc(100vh - 145px);
   overflow-y: scroll;
 }
 .list-item {
@@ -267,6 +274,24 @@ export default {
     object-fit: cover;
     width: 100%;
     height: 100%;
+  }
+}
+@media screen and (min-width: 480px) {
+  .search-section {
+    top: 86px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .search-section {
+    left: calc(15vw + 52px);
+    right: calc(15vw + 40px);
+  }
+}
+@media screen and (min-width: 960px) {
+  .search-section {
+    left: calc(25vw + 52px);
+    right: calc(25vw + 40px);
+    top: 50px;
   }
 }
 </style>

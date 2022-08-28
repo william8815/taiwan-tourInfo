@@ -6,6 +6,22 @@
     <div v-if="isLoading">Loading ...</div>
     <div v-else ref="sightList">
       <SpotList :cardList="cardList" />
+      <div class="btn-section">
+        <button
+          @click="showMore"
+          class="moreBtn btn btn-primary"
+          :disabled="isLoading"
+        >
+          <div
+            v-if="isProcessing"
+            class="spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span v-else>更多景點</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -17,76 +33,52 @@ import SpotList from "./../components/SpotList.vue";
 import spotAPI from "./../apis/scenicSpot";
 import { mapState } from "vuex";
 import { ref, reactive } from "vue";
-const $ = require("jquery");
+
 export default {
+  name: "sightSeeing",
   components: {
     MainHeader,
     SpotList,
     SlideSpot,
   },
   setup() {
+    const selectName = ref("");
+    const category = ref("");
+    const categoryName = ref("");
     const cardList = reactive([]);
-    const isSlideLoading = ref(false);
+    const tempList = reactive([]);
+    const scenicSpots = reactive([]);
     const sightList = ref(null);
+    const skip = ref(0);
+    const top = ref(12);
+    const isSlideLoading = ref(false);
+    const isLoading = ref(false);
+    const isProcessing = ref(false);
     return {
       cardList,
-      isSlideLoading,
       sightList,
-    };
-  },
-  data() {
-    return {
-      top: 12,
-      skip: 0,
-      selectName: "",
-      category: "",
-      categoryName: "",
-      isLoading: false,
-      scenicSpots: [],
+      scenicSpots,
+      tempList,
+      skip,
+      top,
+      isLoading,
+      isSlideLoading,
+      selectName,
+      category,
+      categoryName,
+      isProcessing,
     };
   },
   computed: {
     ...mapState(["currentArea"]),
   },
   created() {
-    this.GetAuthorizationHeader();
+    this.$store.dispatch("GetAuthorizationHeader");
     const { area } = this.$route.params;
     this.fetchSpots(area);
     this.fetchSlideSpot(area);
   },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll, true);
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.handleScroll, true);
-  },
-  unmounted() {
-    window.removeEventListener("scroll", this.handleScroll, true);
-  },
   methods: {
-    GetAuthorizationHeader() {
-      // 取金鑰資料
-      const parameter = {
-        grant_type: "client_credentials",
-        client_id: "williamhsu88157976-944e828c-c2de-47ed",
-        client_secret: "49a3b05b-dbac-4b8d-9cd1-a61c46c0ec6f",
-      };
-      // 取金鑰API
-      const auth_url =
-        "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token";
-      $.ajax({
-        type: "POST",
-        url: auth_url,
-        crossDomain: true,
-        dataType: "JSON",
-        data: parameter,
-        async: false,
-        success: function (data) {
-          // console.log(data.access_token)
-          localStorage.setItem("token", data.access_token);
-        },
-      });
-    },
     async fetchSpots(area) {
       this.isLoading = true;
       let tempArr = [];
@@ -148,21 +140,13 @@ export default {
       this.scenicSpots = tempObj;
       this.isSlideLoading = false;
     },
-    handleScroll() {
-      let scrollHeight = this.sightList.scrollHeight;
-      let clientHeight = document.body.clientHeight;
-      let scrollTop = Math.floor(
-        Math.abs(this.sightList.getBoundingClientRect().top)
-      );
-      let distance = 2;
-      if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.skip += 12;
-        window.removeEventListener("scroll", this.handleScroll, true);
-        setTimeout(() => {
-          this.fetchSpots(this.$route.params.area);
-          window.addEventListener("scroll", this.handleScroll, true);
-        }, 1000);
-      }
+    showMore() {
+      this.isProcessing = true;
+      this.skip += 12;
+      setTimeout(() => {
+        this.fetchSpots(this.$route.params.area);
+        this.isProcessing = false;
+      }, 1000);
     },
   },
   watch: {
@@ -178,3 +162,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.btn-section {
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+}
+</style>

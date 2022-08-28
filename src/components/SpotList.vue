@@ -55,6 +55,7 @@
 import { mapState } from "vuex";
 import { reactive } from "vue";
 export default {
+  name: "spotList",
   props: {
     cardList: {
       type: Array,

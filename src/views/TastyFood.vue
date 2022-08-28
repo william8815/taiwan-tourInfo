@@ -6,6 +6,22 @@
     <div v-if="isLoading">Loading ...</div>
     <div v-else ref="restaurantList">
       <SpotList :cardList="foodList" />
+      <div class="btn-section">
+        <button
+          @click="showMore"
+          class="moreBtn btn btn-primary"
+          :disabled="isLoading"
+        >
+          <div
+            v-if="isProcessing"
+            class="spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span v-else>更多景點</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,10 +43,12 @@ export default {
     const foodList = reactive([]);
     const isSlideLoading = ref(false);
     const restaurantList = ref(null);
+    const isProcessing = ref(false);
     return {
       foodList,
       isSlideLoading,
       restaurantList,
+      isProcessing,
     };
   },
   data() {
@@ -51,15 +69,6 @@ export default {
     const { area } = this.$route.params;
     this.fetchRestaurant(area);
     this.fetchFoodSlide(area);
-  },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll, true);
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.handleScroll, true);
-  },
-  unmounted() {
-    window.removeEventListener("scroll", this.handleScroll, true);
   },
   methods: {
     async fetchRestaurant(area) {
@@ -127,21 +136,13 @@ export default {
       }
       this.isSlideLoading = false;
     },
-    handleScroll() {
-      let scrollHeight = this.restaurantList.scrollHeight;
-      let clientHeight = document.body.clientHeight;
-      let scrollTop = Math.floor(
-        Math.abs(this.restaurantList.getBoundingClientRect().top)
-      );
-      let distance = 2;
-      if (scrollTop + clientHeight >= scrollHeight - distance) {
-        this.skip += 12;
-        window.removeEventListener("scroll", this.handleScroll, true);
-        setTimeout(() => {
-          this.fetchRestaurant(this.$route.params.area);
-          window.addEventListener("scroll", this.handleScroll, true);
-        }, 1000);
-      }
+    showMore() {
+      this.isProcessing = true;
+      this.skip += 12;
+      setTimeout(() => {
+        this.fetchRestaurant(this.$route.params.area);
+        this.isProcessing = false;
+      }, 1000);
     },
   },
   watch: {
@@ -149,6 +150,7 @@ export default {
       if (route.name === "tasty-food") {
         this.top = 12;
         this.skip = 0;
+        this.foodList.splice(0, this.foodList.length);
         this.fetchRestaurant(route.params.area);
         this.fetchFoodSlide(route.params.area);
       }
@@ -156,3 +158,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.btn-section {
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+}
+</style>

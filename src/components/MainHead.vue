@@ -8,63 +8,21 @@
       <!-- navbar -->
       <div class="nav-bar mb-2">
         <ul class="list nav justify-content-between align-items-center">
-          <li class="nav-item">
+          <li v-for="tab in navTab" :key="tab.id" class="nav-item">
             <router-link
               :to="{
-                name: 'sightseeing-spot',
+                name: tab.en_name,
                 params: { area: currentArea.enName },
               }"
               :class="{
-                active: $route.name === 'sightseeing-spot',
+                active: $route.name === tab.en_name,
               }"
               class="nav-link"
               aria-current="page"
               href="#"
             >
-              <i class="fa-solid fa-mountain-sun"></i>
-              <span class="text">景點</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
-              :to="{ name: 'tasty-food' }"
-              :class="{
-                active: $route.name === 'tasty-food',
-                params: { area: currentArea.enName },
-              }"
-              class="nav-link"
-              href="#"
-            >
-              <i class="fa-solid fa-utensils"></i>
-              <span class="text">美食</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
-              :to="{
-                name: 'hostel-stay',
-                params: { area: currentArea.enName },
-              }"
-              :class="{ active: $route.name === 'hostel-stay' }"
-              class="nav-link"
-              href="#"
-            >
-              <i class="fa-solid fa-bed"></i>
-              <span class="text">旅館</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
-              :to="{
-                name: 'activity-fun',
-                params: { area: currentArea.enName },
-              }"
-              :class="{ active: $route.name === 'activity-fun' }"
-              class="nav-link"
-              href="#"
-            >
-              <i class="fa-solid fa-hat-wizard"></i>
-              <span class="text">活動</span>
+              <i class="fa-solid" :class="tab.icon"></i>
+              <span class="text">{{ tab.name }}</span>
             </router-link>
           </li>
         </ul>
@@ -132,7 +90,7 @@
 import { v4 as uuidv4 } from "uuid";
 import SearchPage from "./../components/SearchPage.vue";
 import { mapState } from "vuex";
-import { ref } from "@vue/reactivity";
+import { reactive, ref } from "@vue/reactivity";
 const taiwanSection = [
   {
     id: uuidv4(),
@@ -245,6 +203,32 @@ const taiwanSection = [
     en_name: "LienchiangCounty",
   },
 ];
+const navTabs = [
+  {
+    id: uuidv4(),
+    name: "景點",
+    en_name: "sightseeing-spot",
+    icon: "fa-mountain-sun",
+  },
+  {
+    id: uuidv4(),
+    name: "美食",
+    en_name: "tasty-food",
+    icon: "fa-utensils",
+  },
+  {
+    id: uuidv4(),
+    name: "旅館",
+    en_name: "hostel-stay",
+    icon: "fa-bed",
+  },
+  {
+    id: uuidv4(),
+    name: "活動",
+    en_name: "activity-fun",
+    icon: "fa-hat-wizard",
+  },
+];
 export default {
   components: {
     SearchPage,
@@ -255,12 +239,14 @@ export default {
     const prevScroll = ref(0);
     const keyword = ref("");
     const inputFocus = ref(false);
+    const navTab = reactive([]);
     return {
       switchBox,
       header,
       prevScroll,
       keyword,
       inputFocus,
+      navTab,
     };
   },
   data() {
@@ -289,6 +275,7 @@ export default {
   methods: {
     fetchArea() {
       this.taiwanArea = taiwanSection;
+      this.navTab = navTabs;
       this.enName = this.$route.params.area;
       this.title = this.changeTitle(this.$route.name);
     },
@@ -466,6 +453,7 @@ export default {
   text-align: center;
   position: relative;
   padding: 0 1rem !important;
+
   &__box {
     width: 90vw;
     margin: 0 auto;
@@ -473,6 +461,7 @@ export default {
     border: 2px solid #a4a4a4;
     height: 50px;
     border-radius: 25px;
+    background-color: #fff;
   }
   &__input {
     width: calc(100% - 100px);
@@ -565,6 +554,9 @@ export default {
       width: 70vw;
     }
   }
+  .cancel-btn {
+    left: 10vw;
+  }
 }
 // PC
 @media screen and (min-width: 960px) {
@@ -577,6 +569,7 @@ export default {
   }
   .section {
     max-width: 1400px;
+    margin: 0 auto;
     text-align: initial;
     display: flex;
     justify-content: space-between;
@@ -599,6 +592,7 @@ export default {
     position: static;
     .list {
       width: 100%;
+      line-height: 70px;
       li {
         margin-left: 0.5rem;
       }
@@ -607,7 +601,16 @@ export default {
   .search {
     &__box {
       width: 50vw;
+      max-width: 1000px;
     }
+    &.focus {
+      padding-top: 0 !important;
+    }
+  }
+  .cancel-btn {
+    top: 50%;
+    transform: translateY(-50%);
+    left: 20vw;
   }
 }
 </style>

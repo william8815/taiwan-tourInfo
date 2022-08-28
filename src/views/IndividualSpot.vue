@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <!-- <MainHead /> -->
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="spot" />
     <h2>更多景點 :</h2>
@@ -10,14 +9,12 @@
 </template>
 
 <script>
-// import MainHead from "./../components/MainHead.vue";
 import InfoSection from "../components/InfoSection.vue";
 import MoreSection from "./../components/MoreSection.vue";
 import spotAPI from "./../apis/scenicSpot";
 import { ref, reactive } from "vue";
 export default {
   components: {
-    // MainHead,
     InfoSection,
     MoreSection,
   },
@@ -100,24 +97,31 @@ export default {
         console.log("串接成功!!!");
       }
       this.moreSpot = data.map((spot) => {
-        if (spot.ScenicSpotID !== this.$route.params.id) {
-          return {
-            id: spot.ScenicSpotID,
-            address: spot.Address ? spot.Address : "",
-            class1: spot.Class1 ? spot.Class1 : "",
-            class2: spot.Class2 ? spot.Class2 : "",
-            class3: spot.Class3 ? spot.Class3 : "",
-            description: spot.DescriptionDetail,
-            openTime: spot.OpenTime,
-            phone: spot.Phone,
-            picture: spot.Picture ? spot.Picture : {},
-            position: spot.Position,
-            name: spot.ScenicSpotName,
-          };
-        }
+        return {
+          id: spot.ScenicSpotID,
+          address: spot.Address ? spot.Address : "",
+          class1: spot.Class1 ? spot.Class1 : "",
+          class2: spot.Class2 ? spot.Class2 : "",
+          class3: spot.Class3 ? spot.Class3 : "",
+          description: spot.DescriptionDetail,
+          openTime: spot.OpenTime,
+          phone: spot.Phone,
+          picture: spot.Picture ? spot.Picture : {},
+          position: spot.Position,
+          name: spot.ScenicSpotName,
+        };
       });
+      this.moreSpot = this.moreSpot.filter(
+        (spot) => spot.id !== this.$route.params.id
+      );
+      console.log(this.moreSpot);
       this.isMoreLoading = false;
     },
   },
 };
 </script>
+<style lang="scss" scoped>
+.container {
+  height: 100%;
+}
+</style>
