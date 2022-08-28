@@ -105,6 +105,7 @@ export default {
 
 <style lang="scss" scoped>
 .slide-box {
+  // height: 30vh;
   border-radius: 30px;
   box-shadow: 0px 3px 20px 2px #5b5b5b;
   overflow: hidden;
@@ -112,7 +113,8 @@ export default {
 }
 .image-box {
   width: 100%;
-  height: 45vw;
+  height: 30vh;
+  max-height: 350px;
   position: relative;
   img {
     width: 100%;
@@ -130,6 +132,7 @@ export default {
   }
 }
 .text-box {
+  // height: 30vh;
   h3,
   p {
     color: #fff;

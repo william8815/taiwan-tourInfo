@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <MainHeader :searchState="isSearchState" />
-    <div class="title py-3">
+    <div class="title">
       <i @click="$router.back()" class="fa-solid fa-arrow-left px-3"></i>
       <span>搜尋結果</span>
     </div>

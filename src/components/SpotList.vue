@@ -119,12 +119,15 @@ export default {
     gap: 0.75rem;
   }
   .spot-card {
+    max-height: 400px;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
   }
   .card-image {
     width: 100%;
     height: 20vh;
+    min-height: 150px;
+    max-height: 220px;
   }
 }
 // PC
