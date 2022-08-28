@@ -91,7 +91,6 @@ export default {
 }
 .spot-card {
   width: 20vh;
-  height: 15vh;
   flex-shrink: 0;
   margin-right: 0.5rem;
   text-align: center;
@@ -100,7 +99,7 @@ export default {
   overflow: hidden;
   .image {
     width: 100%;
-    height: 100%;
+    height: 15vh;
     overflow: hidden;
     position: relative;
     img {

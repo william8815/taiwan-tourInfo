@@ -28,9 +28,9 @@
         </ul>
       </div>
     </div>
-    <div ref="switchBox" class="switch-box" :class="{ focus: inputFocus }">
+    <div ref="switchBox" class="switch-box">
       <!-- searchbar -->
-      <div class="search" :class="{ focus: inputFocus }">
+      <div class="search">
         <div
           class="search__box d-flex justify-content-center align-items-center"
         >
@@ -46,24 +46,19 @@
             id=""
             :placeholder="'搜尋台灣' + category.title"
           />
-          <div class="search__btn">
-            <i
-              v-if="inputFocus"
-              @click="cleanKeyword"
-              class="fa-solid fa-xmark"
-            ></i>
-            <i v-else class="fa-solid fa-magnifying-glass"></i>
+          <i
+            v-if="inputFocus"
+            @click.stop.prevent="cleanKeyword"
+            class="cancel-btn fa-solid fa-xmark"
+          ></i>
+          <div @click.stop.prevent="searchKeyword" class="search__btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
           </div>
         </div>
-        <SearchPage v-if="inputFocus" :search_keyword="keyword" />
-        <i
-          v-if="inputFocus"
-          @click="handleInputBlur"
-          class="cancel-btn fa-solid fa-arrow-left"
-        ></i>
+        <!-- <SearchPage v-if="inputFocus" :search_keyword="keyword" /> -->
       </div>
       <!-- selectbar -->
-      <div v-if="!inputFocus" class="select my-2">
+      <div v-if="!search" class="select my-2">
         <label for="area">請選擇區域 : </label>
         <select
           id="area"
@@ -88,7 +83,7 @@
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-import SearchPage from "./../components/SearchPage.vue";
+// import SearchPage from "./../components/SearchPage.vue";
 import { mapState } from "vuex";
 import { reactive, ref } from "@vue/reactivity";
 const taiwanSection = [
@@ -231,8 +226,14 @@ const navTabs = [
 ];
 export default {
   components: {
-    SearchPage,
+    // SearchPage,
   },
+  props: {
+    searchState: {
+      type: Boolean,
+    },
+  },
+  emits: ["afterSearch"],
   setup() {
     const switchBox = ref(null);
     const header = ref(null);
@@ -240,6 +241,7 @@ export default {
     const keyword = ref("");
     const inputFocus = ref(false);
     const navTab = reactive([]);
+    const search = ref(false);
     return {
       switchBox,
       header,
@@ -247,6 +249,7 @@ export default {
       keyword,
       inputFocus,
       navTab,
+      search,
     };
   },
   data() {
@@ -260,11 +263,11 @@ export default {
     ...mapState(["currentArea", "category"]),
   },
   created() {
+    this.search = this.searchState;
     this.fetchArea();
   },
   mounted() {
     window.addEventListener("scroll", this.scrollHide, true);
-    this.changeArea();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.scrollHide, true);
@@ -276,7 +279,10 @@ export default {
     fetchArea() {
       this.taiwanArea = taiwanSection;
       this.navTab = navTabs;
-      this.enName = this.$route.params.area;
+      this.enName =
+        this.$route.params.area ||
+        JSON.parse(localStorage.getItem("currentArea")).enName;
+      this.changeArea();
       this.title = this.changeTitle(this.$route.name);
     },
     changeArea() {
@@ -342,12 +348,24 @@ export default {
     cleanKeyword() {
       this.keyword = "";
     },
+    searchKeyword() {
+      if (this.keyword.trim() === "") return;
+      this.$store.commit("changeKeyword", this.keyword);
+      this.$router.push({
+        name: "search-page",
+        params: {
+          category: this.category.enTitle,
+          area: JSON.parse(localStorage.getItem("currentArea")).enName,
+        },
+      });
+    },
   },
   watch: {
     $route(route) {
       this.changeTitle(route.name);
     },
     keyword(value) {
+      // console.log(value);
       this.keyword = value;
     },
   },
@@ -462,6 +480,15 @@ export default {
     height: 50px;
     border-radius: 25px;
     background-color: #fff;
+    .cancel-btn {
+      position: absolute;
+      top: 50%;
+      right: 3rem;
+      font-size: 1.25rem;
+      transform: translateY(-50%);
+      color: #a4a4a4;
+      cursor: pointer;
+    }
   }
   &__input {
     width: calc(100% - 100px);
@@ -477,6 +504,7 @@ export default {
     border-radius: 50%;
     background-color: #a4a4a4;
     color: #fff;
+    cursor: pointer;
   }
   &__title {
     width: 60px;
@@ -491,12 +519,7 @@ export default {
     padding-top: 2rem !important;
   }
 }
-.cancel-btn {
-  position: absolute;
-  top: 0;
-  left: 1rem;
-  font-size: 1.25rem;
-}
+
 // 平板
 @media screen and (min-width: 480px) {
   .header {
@@ -554,9 +577,6 @@ export default {
       width: 70vw;
     }
   }
-  .cancel-btn {
-    left: 10vw;
-  }
 }
 // PC
 @media screen and (min-width: 960px) {
@@ -606,11 +626,6 @@ export default {
     &.focus {
       padding-top: 0 !important;
     }
-  }
-  .cancel-btn {
-    top: 50%;
-    transform: translateY(-50%);
-    left: 20vw;
   }
 }
 </style>

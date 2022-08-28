@@ -48,6 +48,11 @@ const routes = [
     component: () => import("./../views/IndividualActivity.vue"),
   },
   {
+    path: "/search/:category",
+    name: "search-page",
+    component: () => import("./../views/SearchBar.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: () => import("./../views/NotFound.vue"),

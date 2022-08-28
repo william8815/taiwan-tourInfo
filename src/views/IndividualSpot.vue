@@ -114,7 +114,6 @@ export default {
       this.moreSpot = this.moreSpot.filter(
         (spot) => spot.id !== this.$route.params.id
       );
-      console.log(this.moreSpot);
       this.isMoreLoading = false;
     },
   },

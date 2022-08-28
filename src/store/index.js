@@ -10,20 +10,31 @@ export default createStore({
       title: "景點",
       enTitle: "spot",
     },
+    searchKeyWord: "",
   },
   getters: {},
   mutations: {
     setCurrentArea(state, currentArea) {
+      localStorage.setItem("currentArea", JSON.stringify(currentArea));
+      let area = JSON.parse(localStorage.getItem("currentArea")) || currentArea;
       state.currentArea = {
         ...state.currentArea,
-        ...currentArea,
+        ...area,
       };
     },
     setCategoryTitle(state, category) {
+      localStorage.setItem("category", JSON.stringify(category));
+      let categoryState =
+        JSON.parse(localStorage.getItem("category")) || category;
       state.category = {
         ...state.category,
-        ...category,
+        ...categoryState,
       };
+    },
+    changeKeyword(state, searchKeyWord) {
+      localStorage.setItem("keyWord", JSON.stringify(searchKeyWord));
+      let keyword = JSON.parse(localStorage.getItem("keyWord"));
+      state.searchKeyWord = keyword;
     },
   },
   actions: {

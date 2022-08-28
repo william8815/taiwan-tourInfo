@@ -19,7 +19,7 @@
           >
             <span class="visually-hidden">Loading...</span>
           </div>
-          <span v-else>更多景點</span>
+          <span v-else>更多旅館</span>
         </button>
       </div>
     </div>

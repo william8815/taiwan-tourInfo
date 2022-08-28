@@ -3,20 +3,20 @@
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="activity" />
     <h2>更多旅館 :</h2>
-    <!-- <div v-if="isLoading">...Loading</div>
-    <MoreSection v-else :more_spot="moreSpot" /> -->
+    <div v-if="isMoreLoading">...Loading</div>
+    <MoreSection v-else :more_spot="moreSpot" />
   </div>
 </template>
 
 <script>
 import InfoSection from "../components/InfoSection.vue";
-// import MoreSection from "./../components/MoreSection.vue";
+import MoreSection from "./../components/MoreSection.vue";
 import activityAPI from "./../apis/activityFun";
 import { ref, reactive } from "vue";
 export default {
   components: {
     InfoSection,
-    // MoreSection,
+    MoreSection,
   },
   setup() {
     const top = ref(1);
@@ -36,16 +36,19 @@ export default {
     });
     const moreActivity = reactive([]);
     const isLoading = ref(false);
+    const isMoreLoading = ref(false);
     return {
       top,
       skip,
       activity,
       isLoading,
       moreActivity,
+      isMoreLoading,
     };
   },
   created() {
     this.fetchOneHostel();
+    this.fetchMoreActivity();
   },
   methods: {
     async fetchOneHostel() {
@@ -79,6 +82,36 @@ export default {
         website: data[0].WebsiteUrl ? data[0].WebsiteUrl : "",
       };
       this.isLoading = false;
+    },
+    async fetchMoreActivity() {
+      this.isMoreLoading = true;
+      const { data, statusText } = await activityAPI.getAllActivity({
+        filter: "",
+        top: `${encodeURIComponent("$")}top=${10}&`,
+        skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
+      });
+      if (statusText === "OK") {
+        console.log("串接成功!!!");
+      }
+      this.moreSpot = data.map((spot) => {
+        return {
+          id: spot.ActivityID,
+          address: spot.Address ? spot.Address : "",
+          class1: spot.Class1 ? spot.Class1 : "",
+          class2: spot.Class2 ? spot.Class2 : "",
+          class3: spot.Class3 ? spot.Class3 : "",
+          description: spot.Description,
+          openTime: spot.OpenTime,
+          phone: spot.Phone,
+          picture: spot.Picture ? spot.Picture : {},
+          position: spot.Position,
+          name: spot.ActivityName,
+        };
+      });
+      this.moreSpot = this.moreSpot.filter(
+        (spot) => spot.id !== this.$route.params.id
+      );
+      this.isMoreLoading = false;
     },
   },
 };
