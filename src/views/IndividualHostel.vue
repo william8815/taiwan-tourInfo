@@ -70,7 +70,7 @@ export default {
         class2: "",
         class3: "",
         description: data[0].Description,
-        openTime: data[0].OpenTime,
+        openTime: "",
         phone: data[0].Phone,
         picture: data[0].Picture ? data[0].Picture : {},
         position: data[0].Position,

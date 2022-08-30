@@ -13,10 +13,7 @@
           }"
         >
           <img
-            :src="
-              spot.picture.PictureUrl1 ||
-              'https://i.postimg.cc/nz9DxX0W/other-User.png'
-            "
+            :src="filterImage(spot.picture.PictureUrl1)"
             class="card-img"
             alt="..."
           />
@@ -60,6 +57,13 @@ export default {
       this.moreSpot = this.more_spot;
     },
   },
+  computed: {
+    filterImage() {
+      return function (image) {
+        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+      };
+    },
+  },
 };
 </script>
 
@@ -81,7 +85,7 @@ export default {
   // bar的樣式
   &::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    background-color: #a4a4a4;
+    background-color: var(--font-color);
   }
 }
 .card-list {
@@ -95,7 +99,7 @@ export default {
   margin-right: 0.5rem;
   text-align: center;
   border: none;
-  border-radius: 30px;
+  border-radius: 15px;
   overflow: hidden;
   .image {
     width: 100%;
@@ -117,7 +121,7 @@ export default {
     padding: 0.5rem 0;
     h5 {
       font-size: 0.75rem;
-      color: #fff;
+      color: var(--spot-background);
     }
   }
 }

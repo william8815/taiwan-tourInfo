@@ -241,18 +241,10 @@ export default {
         this.isProcessing = false;
       }, 1000);
     },
-    // handleSearch(keyWord) {
-    //   console.log(keyWord);
-    //   this.keyword = keyWord;
-    //   this.fetchSearchList(this.keyword);
-    // },
   },
   watch: {
     searchKeyWord(keyword) {
       this.fetchSearchList(keyword);
-    },
-    $route(value) {
-      console.log(value);
     },
   },
 };

@@ -8,13 +8,7 @@
       <!-- 圖片 -->
       <div class="image">
         <a href="#">
-          <img
-            :src="
-              info.picture.PictureUrl1 ||
-              'https://i.postimg.cc/nz9DxX0W/other-User.png'
-            "
-            alt=""
-          />
+          <img :src="filterImage(info.picture.PictureUrl1)" alt="" />
         </a>
       </div>
       <div class="map-info">
@@ -24,10 +18,42 @@
         </div>
         <!-- 詳細資訊 -->
         <div class="information mt-2">
-          <ul class="ps-0">
-            <li>電話 : {{ info.phone }}</li>
-            <li>地址 : {{ info.address }}</li>
-            <li>開放時間 : {{ info.openTime }}</li>
+          <ul v-if="category.enTitle === 'spot'" class="ps-0">
+            <li><b>電話 :</b> {{ info.phone }}</li>
+            <li><b>地址 :</b> {{ info.address }}</li>
+            <li><b>開放時間 :</b> {{ info.openTime }}</li>
+          </ul>
+          <ul v-else-if="category.enTitle === 'food'" class="ps-0">
+            <li><b>電話 :</b> {{ info.phone }}</li>
+            <li><b>地址 :</b> {{ info.address }}</li>
+            <li><b>開放時間 :</b> {{ info.openTime }}</li>
+            <li><b>相關網站 :</b> {{ info.website || "無相關網站" }}</li>
+          </ul>
+          <ul v-else-if="category.enTitle === 'hostel'" class="ps-0">
+            <li><b>電話 :</b> {{ info.phone }}</li>
+            <li><b>地址 :</b> {{ info.address }}</li>
+            <li><b>規格 :</b> {{ info.service || "無提供相關資料" }}</li>
+            <li><b>服務 :</b> {{ info.openTime || "無提供相關資料" }}</li>
+            <li>
+              <b>相關網站 :</b>
+              <a :href="info.website">{{
+                info.website ? " 點此進入" : " 無相關網站"
+              }}</a>
+            </li>
+          </ul>
+          <ul v-else-if="category.enTitle === 'activity'" class="ps-0">
+            <li><b>電話 :</b> {{ info.phone || "無提供相關資料" }}</li>
+            <li><b>地址 :</b> {{ info.address }}</li>
+            <li><b>位置 :</b> {{ info.location }}</li>
+            <li><b>舉辦方 :</b> {{ info.organizer }}</li>
+            <li><b>開始時間 :</b> {{ info.start }}</li>
+            <li><b>結束時間 :</b> {{ info.end }}</li>
+            <li>
+              <b>相關網站 :</b>
+              <a :href="info.website" :class="{ active: info.website }"
+                >&nbsp;{{ info.website ? "點此進入" : "無相關網站" }}</a
+              >
+            </li>
           </ul>
         </div>
       </div>
@@ -44,6 +70,7 @@
 import L from "leaflet/dist/leaflet";
 import "leaflet/dist/leaflet.css";
 import { ref } from "vue";
+import { mapState } from "vuex";
 export default {
   props: {
     initial_info: {
@@ -62,6 +89,14 @@ export default {
   },
   mounted() {
     this.fetchMap();
+  },
+  computed: {
+    ...mapState(["category"]),
+    filterImage() {
+      return function (image) {
+        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+      };
+    },
   },
   methods: {
     fetchInfo() {
@@ -97,6 +132,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-section {
+  background: #fff;
+  padding: 0 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 30px;
+}
 .title {
   padding: 1rem 0;
   font-size: 1.5rem;

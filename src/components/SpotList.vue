@@ -9,10 +9,7 @@
           }"
         >
           <img
-            :src="
-              spot.picture.PictureUrl1 ||
-              'https://i.postimg.cc/nz9DxX0W/other-User.png'
-            "
+            :src="filterImage(spot.picture.PictureUrl1)"
             class="card-img-top"
             :alt="spot.name"
           />
@@ -65,6 +62,7 @@ export default {
   setup() {
     const spots = reactive([]);
     const spotAll = reactive([]);
+
     return {
       spots,
       spotAll,
@@ -80,6 +78,11 @@ export default {
   },
   computed: {
     ...mapState(["category"]),
+    filterImage() {
+      return function (image) {
+        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+      };
+    },
   },
 };
 </script>
@@ -91,6 +94,9 @@ export default {
   grid-template-rows: auto;
   overflow: hidden;
   padding: 0.5rem;
+}
+.spot-card:hover {
+  box-shadow: 0px 3px 20px 2px #5b5b5b;
 }
 .card-image {
   align-self: center;
@@ -109,6 +115,7 @@ export default {
 }
 .badge-item {
   font-size: 0.5rem;
+  background: var(--font-color) !important;
 }
 // 平板
 @media screen and (min-width: 768px) {

@@ -24,6 +24,7 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   scroll-behavior: smooth;
+  background: var(--spot-background);
 }
 ul,
 li {
@@ -33,6 +34,9 @@ li {
 a {
   text-decoration: none;
   color: #000 !important;
+}
+a.active {
+  color: blue !important;
 }
 // title
 h1 {
@@ -53,6 +57,9 @@ h3 {
 h4 {
   font-weight: 400;
   font-size: 1rem;
+}
+.container {
+  background: var(--spot-background);
 }
 // 平板
 @media screen and (min-width: 480px) {

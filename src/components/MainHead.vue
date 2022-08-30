@@ -32,7 +32,7 @@
       <!-- searchbar -->
       <div class="search">
         <div
-          class="search__box d-flex justify-content-center align-items-center"
+          class="search__box d-flex justify-content-between align-items-center"
         >
           <div class="search__title">
             <span>{{ category.title }}</span>
@@ -365,7 +365,6 @@ export default {
       this.changeTitle(route.name);
     },
     keyword(value) {
-      // console.log(value);
       this.keyword = value;
     },
   },
@@ -390,12 +389,12 @@ export default {
   width: 100%;
   text-align: center;
   .logo {
+    color: var(--font-color);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 999;
-    background-color: #fff;
   }
 }
 
@@ -409,18 +408,17 @@ export default {
     width: 90%;
     height: 60px;
     padding: 0 10px;
-    color: #a4a4a4;
+    // color: #a4a4a4;
     border-radius: 30px;
     margin: 0 auto;
     font-size: 1.25rem;
-    background-color: #a4a4a4;
-    box-shadow: 0px 3px 20px 2px #a4a4a4;
+    background-color: var(--font-color);
     a {
       display: inline-block;
       padding: 0;
       width: 40px;
       line-height: 40px;
-      border: 1px solid #a4a4a4;
+      border: 1px solid var(--font-color);
       border-radius: 50%;
     }
     i {
@@ -436,7 +434,7 @@ export default {
     }
     a.active i,
     a.active .text {
-      color: #333;
+      color: var(--font-color);
     }
   }
 }
@@ -451,7 +449,7 @@ export default {
   padding: 1rem 0 !important;
   padding-bottom: 0 !important;
   &.hight-line {
-    border-bottom: 1px solid #a4a4a4;
+    border-bottom: 1px solid var(--font-color);
     transition: bottom 0.4s ease-in;
   }
   &.focus {
@@ -476,7 +474,7 @@ export default {
     width: 90vw;
     margin: 0 auto;
     position: relative;
-    border: 2px solid #a4a4a4;
+    outline: 2px solid var(--font-color);
     height: 50px;
     border-radius: 25px;
     background-color: #fff;
@@ -486,7 +484,7 @@ export default {
       right: 3rem;
       font-size: 1.25rem;
       transform: translateY(-50%);
-      color: #a4a4a4;
+      color: var(--font-color);
       cursor: pointer;
     }
   }
@@ -502,17 +500,17 @@ export default {
     line-height: 40px;
     margin-right: 5px;
     border-radius: 50%;
-    background-color: #a4a4a4;
+    background-color: var(--font-color);
     color: #fff;
     cursor: pointer;
   }
   &__title {
     width: 60px;
-    height: 50px;
-    line-height: 50px;
+    height: 52px;
+    line-height: 52px;
     border-top-left-radius: 26px;
     border-bottom-left-radius: 26px;
-    background-color: #a4a4a4;
+    background-color: var(--font-color);
     color: #fff;
   }
   &.focus {
@@ -523,16 +521,16 @@ export default {
 // 平板
 @media screen and (min-width: 480px) {
   .header {
-    height: 240px;
+    height: 245px;
     &.cut-height {
-      height: 137px;
+      height: 142px;
     }
   }
   .section {
     text-align: center;
   }
   .nav-bar {
-    top: 60px;
+    top: 67px;
     height: 60px;
     .list {
       width: 95%;
@@ -546,14 +544,26 @@ export default {
         display: inline;
         padding: 0.5rem 0.75rem;
         border: none;
+        border-bottom: 2px solid #fff;
+        border-radius: 0px;
+      }
+      a.active {
+        border-bottom: 2px solid var(--font-color);
+      }
+      a:not(.active):hover {
+        border-bottom: 2px solid var(--spot-background);
+        i,
+        .text {
+          color: var(--spot-background);
+        }
       }
       i {
-        color: #a4a4a4;
+        color: #333;
       }
       .text {
         display: inline-block;
         margin-left: 0.5rem;
-        color: #a4a4a4;
+        color: #333;
       }
     }
   }
@@ -582,7 +592,7 @@ export default {
 @media screen and (min-width: 960px) {
   .header {
     height: 195px;
-    border-bottom: 1px solid #a4a4a4;
+    border-bottom: 2px solid var(--font-color);
     &.cut-height {
       height: 195px;
     }

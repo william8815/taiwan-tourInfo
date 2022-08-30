@@ -27,10 +27,7 @@
         >
           <div class="image-box">
             <img
-              :src="
-                spot.picture.PictureUrl1 ||
-                'https://i.postimg.cc/nz9DxX0W/other-User.png'
-              "
+              :src="filterImage(spot.picture.PictureUrl1)"
               class="d-block w-100"
               alt="..."
             />
@@ -99,6 +96,11 @@ export default {
   },
   computed: {
     ...mapState(["category"]),
+    filterImage() {
+      return function (image) {
+        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+      };
+    },
   },
 };
 </script>

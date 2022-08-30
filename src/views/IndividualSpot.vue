@@ -73,7 +73,7 @@ export default {
       }
       this.spot = {
         id: data[0].ScenicSpotID,
-        address: data[0].Address ? data[0].Address : "",
+        address: data[0].Address ? data[0].Address : data[0].City,
         class1: data[0].Class1 ? data[0].Class1 : "",
         class2: data[0].Class2 ? data[0].Class2 : "",
         class3: data[0].Class3 ? data[0].Class3 : "",
@@ -99,7 +99,7 @@ export default {
       this.moreSpot = data.map((spot) => {
         return {
           id: spot.ScenicSpotID,
-          address: spot.Address ? spot.Address : "",
+          address: spot.Address ? spot.Address : spot.City,
           class1: spot.Class1 ? spot.Class1 : "",
           class2: spot.Class2 ? spot.Class2 : "",
           class3: spot.Class3 ? spot.Class3 : "",
