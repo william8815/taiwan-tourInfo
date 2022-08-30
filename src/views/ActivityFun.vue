@@ -84,6 +84,9 @@ export default {
               `contains(${this.category}, '${this.categoryName}')`
             )}&`
           : "",
+        orderby: `${encodeURIComponent("$")}orderby=${encodeURIComponent(
+          "EndTime desc"
+        )}&`,
         top: `${encodeURIComponent("$")}top=${this.top}&`,
         skip: `${encodeURIComponent("$")}skip=${this.skip}&`,
       });

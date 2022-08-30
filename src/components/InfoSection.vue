@@ -45,9 +45,9 @@
             <li><b>電話 :</b> {{ info.phone || "無提供相關資料" }}</li>
             <li><b>地址 :</b> {{ info.address }}</li>
             <li><b>位置 :</b> {{ info.location }}</li>
+            <li><b>開始時間 :</b> {{ changeTime(info.start) }}</li>
+            <li><b>結束時間 :</b> {{ changeTime(info.end) }}</li>
             <li><b>舉辦方 :</b> {{ info.organizer }}</li>
-            <li><b>開始時間 :</b> {{ info.start }}</li>
-            <li><b>結束時間 :</b> {{ info.end }}</li>
             <li>
               <b>相關網站 :</b>
               <a :href="info.website" :class="{ active: info.website }"
@@ -94,7 +94,15 @@ export default {
     ...mapState(["category"]),
     filterImage() {
       return function (image) {
-        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+        return (
+          image ||
+          "https://i.postimg.cc/fyZnBVXy/pexels-tsang-chung-yee-669963.jpg"
+        );
+      };
+    },
+    changeTime() {
+      return function (time) {
+        return time.split("T")[0];
       };
     },
   },

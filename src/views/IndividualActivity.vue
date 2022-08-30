@@ -2,7 +2,7 @@
   <div class="container">
     <div v-if="isLoading">...Loading</div>
     <InfoSection v-else :initial_info="activity" />
-    <h2>更多旅館 :</h2>
+    <h2>更多活動 :</h2>
     <div v-if="isMoreLoading">...Loading</div>
     <MoreSection v-else :more_spot="moreSpot" />
   </div>

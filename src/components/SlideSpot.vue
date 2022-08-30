@@ -98,7 +98,10 @@ export default {
     ...mapState(["category"]),
     filterImage() {
       return function (image) {
-        return image || "https://i.postimg.cc/nz9DxX0W/other-User.png";
+        return (
+          image ||
+          "https://i.postimg.cc/fyZnBVXy/pexels-tsang-chung-yee-669963.jpg"
+        );
       };
     },
   },
