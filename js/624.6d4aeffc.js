@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunktaiwan_tour"]=self["webpackChunktaiwan_tour"]||[]).push([[624],{624:function(n,t,u){u.r(t),u.d(t,{default:function(){return i}});var r=u(6252);function a(n,t){return(0,r.wg)(),(0,r.iD)("h1",null,"404 Not Found")}var e=u(3744);const o={},c=(0,e.Z)(o,[["render",a]]);var i=c}}]);
+//# sourceMappingURL=624.6d4aeffc.js.map
